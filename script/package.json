@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pnpm ts-node --esm index.ts"
+    "get-locations": "source .env && pnpm ts-node --esm get-locations.ts"
   },
   "keywords": [],
   "author": "",
