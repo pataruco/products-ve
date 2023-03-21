@@ -5,7 +5,7 @@ import type { LocationWithCoordinates } from './get-locations';
 
 let seedTemplate = `
 INSERT INTO
-  locations (geom, name, address)
+  locations (geog, name, address)
 VALUES
 `;
 
@@ -18,7 +18,7 @@ const main = async () => {
     ) => {
       const endOfTheline = index + 1 === length ? ';' : ',';
 
-      const value = `(ST_GeomFromText('POINT(${lat} ${lng})', 4326), '${name}', '${address}')${endOfTheline}`;
+      const value = `(ST_GeographyFromText('POINT(${lng} ${lat})'), '${name}', '${address}')${endOfTheline}`;
 
       seedTemplate = seedTemplate + value;
     },
