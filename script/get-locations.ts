@@ -18,7 +18,7 @@ interface GeoCodingResults {
   results: GeoCoding[];
 }
 
-interface LocationWithCoordinates extends Location {
+export interface LocationWithCoordinates extends Location {
   lat: number;
   lng: number;
 }
