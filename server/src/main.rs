@@ -2,7 +2,7 @@ use juniper::{
     http::{graphiql::graphiql_source, GraphQLRequest},
     EmptySubscription, RootNode,
 };
-use std::{convert::Infallible, sync::Arc};
+use std::{convert::Infallible, env, sync::Arc};
 use tokio_postgres::{Client, NoTls};
 use warp::{http::Response, Filter};
 
@@ -82,6 +82,18 @@ async fn graphql(
 
 #[tokio::main]
 async fn main() {
+    env::set_var("RUST_LOG", "warp_server");
+
+    let log = warp::log("warp_server");
+
+    let homepage = warp::path::end().map(|| {
+        Response::builder()
+            .header("content-type", "text/html")
+            .body(format!(
+                "<html><h1>juniper_warp</h1><div>visit <a href=\"/graphiql\">/graphiql</a></html>"
+            ))
+    });
+
     let (client, connection) =
         tokio_postgres::connect("postgresql://pataruco:pataruco@127.0.0.1/productsdb", NoTls)
             .await
@@ -113,11 +125,14 @@ async fn main() {
         .and(schema.clone())
         .and(ctx.clone())
         .and(warp::body::json())
-        .and_then(graphql);
+        .and_then(graphql)
+        .with(log);
 
     let graphiql_route = warp::get()
         .and(warp::path!("graphiql"))
-        .map(|| warp::reply::html(graphiql_source("graphql", Some(""))));
+        .and(juniper_warp::graphiql_filter("/graphql", None))
+        .or(homepage)
+        .with(log);
 
     let routes = graphql_route.or(graphiql_route);
 
