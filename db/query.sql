@@ -1,7 +1,7 @@
 SELECT
   *
 FROM
-  locations
+  stores
 WHERE
   ST_DWithin(
     geog,
