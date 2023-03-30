@@ -1,15 +1,14 @@
-use juniper::{
-    http::{graphiql::graphiql_source, GraphQLRequest},
-    EmptySubscription, RootNode,
-};
+use juniper::{http::GraphQLRequest, EmptySubscription, RootNode};
+use postgres_types::{FromSql, ToSql};
 use std::{convert::Infallible, env, sync::Arc};
 use tokio_postgres::{Client, NoTls};
 use warp::{http::Response, Filter};
 
-#[derive(juniper::GraphQLObject)]
+#[derive(juniper::GraphQLObject, Debug, ToSql, FromSql)]
 struct Location {
-    id: String,
+    // id: Option<String>,
     name: String,
+    address: Option<String>,
 }
 
 struct QueryRoot;
@@ -17,48 +16,60 @@ struct MutationRoot;
 
 #[juniper::graphql_object(Context = Context)]
 impl QueryRoot {
-    async fn location(ctx: &Context, id: String) -> juniper::FieldResult<Location> {
-        let uuid = uuid::Uuid::parse_str(&id)?;
+    async fn location(ctx: &Context, name: String) -> juniper::FieldResult<Location> {
+        // let uuid = uuid::Uuid::parse_str(&id)?;
         let row = ctx
             .client
-            .query_one("SELECT name FROM lcoations WHERE id = $1", &[&id])
+            .query_one(
+                "SELECT name, address FROM locations WHERE name = $1",
+                &[&name],
+            )
             .await?;
         let location = Location {
-            id,
+            // id: row.try_get(0)?,
             name: row.try_get(0)?,
+            address: row.try_get(1)?,
         };
         Ok(location)
     }
 
-    async fn locations(ctx: &Context) -> juniper::FieldResult<Vec<Location>> {
-        let rows = ctx
-            .client
-            .query("SELECT location_id, name FROM locations", &[])
-            .await?;
-        let mut locations = Vec::new();
-        for row in rows {
-            let id: uuid::Uuid = uuid::Uuid::parse_str(row.try_get(0)?)?;
-            let location = Location {
-                id: id.to_string(),
-                name: row.try_get(1)?,
-            };
-            locations.push(location);
-        }
-        Ok(locations)
-    }
+    // async fn locations(ctx: &Context) -> juniper::FieldResult<Vec<Location>> {
+    //     let rows = ctx
+    //         .client
+    //         .query("SELECT location_id, name FROM locations", &[])
+    //         .await?;
+    //     let mut locations = Vec::new();
+    //     for row in rows {
+    //         let id: uuid::Uuid = uuid::Uuid::parse_str(row.try_get(0)?)?;
+    //         let location = Location {
+    //             id: id.to_string(),
+    //             name: row.try_get(1)?,
+    //         };
+    //         locations.push(location);
+    //     }
+    //     Ok(locations)
+    // }
 }
 
 #[juniper::graphql_object(Context = Context)]
 impl MutationRoot {
-    async fn add_location(ctx: &Context, name: String) -> juniper::FieldResult<Location> {
-        let id = uuid::Uuid::new_v4().to_string();
+    async fn add_location(
+        ctx: &Context,
+        name: String,
+        address: String,
+    ) -> juniper::FieldResult<Location> {
+        // let id = uuid::Uuid::new_v4().to_string();
         ctx.client
             .execute(
-                "INSERT INTO locations (name, location_id) VALUES ($1, $2)",
-                &[&name, &id],
+                "INSERT INTO locations (name, address) VALUES ($1, $2)",
+                &[&name, &address],
             )
             .await?;
-        Ok(Location { id, name })
+        Ok(Location {
+            name,
+            address: Some(address),
+            // id: Some(id),
+        })
     }
 }
 
