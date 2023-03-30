@@ -1,5 +1,4 @@
-import { query } from '../../db';
-import { Store } from '../../types/store';
+import { query } from '../../db/index.js';
 
 export const getStoreById = async (id: string) => {
   const { rows } = await query(`SELECT * from stores WHERE store_id = $1`, [

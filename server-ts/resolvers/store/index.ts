@@ -1,4 +1,4 @@
-import { getStoreById } from '../../models/store';
+import { getStoreById } from '../../models/store/index.js';
 
 const resolvers = {
   Query: {

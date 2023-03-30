@@ -13,15 +13,21 @@ export interface Store {
 }
 
 export const StoreTypeDef = gql`
+  type Coordinates {
+    lat: Float
+    lng: Float
+  }
+
   type Store {
     id: ID
-    coordinates: {
-      lat: Float
-      lng: Float
-    }
+    coordinates: Coordinates
     address: String
     name: String
     createdAt: String
     updatedAt: String
+  }
+
+  type Query {
+    store(id: String!): Store
   }
 `;

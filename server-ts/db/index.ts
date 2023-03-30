@@ -1,5 +1,7 @@
 import type { ClientConfig, QueryConfig } from 'pg';
-import { Pool } from 'pg';
+import pg from 'pg';
+
+const { Pool } = pg;
 
 const dbConfig: ClientConfig = {
   host: '127.0.0.1',

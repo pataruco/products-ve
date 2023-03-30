@@ -5,8 +5,8 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import resolvers from './resolvers/store/index';
-import { StoreTypeDef } from './types/store';
+import { StoreTypeDef } from './types/store/index.js';
+import resolvers from './resolvers/store/index.js';
 
 interface MyContext {
   token?: string;
