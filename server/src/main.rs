@@ -4,11 +4,15 @@ use std::{convert::Infallible, env, sync::Arc};
 use tokio_postgres::{Client, NoTls};
 use warp::{http::Response, Filter};
 
+// TODO: Abstract into modules
+
 #[derive(juniper::GraphQLObject, Debug, ToSql, FromSql)]
 struct Location {
+    // TODO: type to Postgres UUID
     // id: Option<String>,
     name: String,
     address: Option<String>,
+    geog: Option<String>,
 }
 
 struct QueryRoot;
@@ -21,7 +25,7 @@ impl QueryRoot {
         let row = ctx
             .client
             .query_one(
-                "SELECT name, address FROM locations WHERE name = $1",
+                "SELECT name, address, geog FROM locations WHERE name = $1",
                 &[&name],
             )
             .await?;
@@ -29,10 +33,12 @@ impl QueryRoot {
             // id: row.try_get(0)?,
             name: row.try_get(0)?,
             address: row.try_get(1)?,
+            geog: row.try_get(2)?,
         };
         Ok(location)
     }
 
+    // TODO: Impleting UUID type
     // async fn locations(ctx: &Context) -> juniper::FieldResult<Vec<Location>> {
     //     let rows = ctx
     //         .client
@@ -57,18 +63,21 @@ impl MutationRoot {
         ctx: &Context,
         name: String,
         address: String,
+        geog: String,
     ) -> juniper::FieldResult<Location> {
+        // TODO: Impleting UUID type
         // let id = uuid::Uuid::new_v4().to_string();
         ctx.client
             .execute(
-                "INSERT INTO locations (name, address) VALUES ($1, $2)",
-                &[&name, &address],
+                "INSERT INTO locations (name, address, geog) VALUES ($1, $2, $3)",
+                &[&name, &address, &geog],
             )
             .await?;
         Ok(Location {
             name,
             address: Some(address),
-            // id: Some(id),
+            // TODO: Impleting PostGis Geography type
+            geog: Some(geog),
         })
     }
 }
