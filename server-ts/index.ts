@@ -1,21 +1,21 @@
 import { ApolloServer } from '@apollo/server';
-import { readFileSync } from 'fs';
-import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
-import express from 'express';
-import http from 'http';
-import cors from 'cors';
+import { expressMiddleware } from '@apollo/server/express4';
+import { readFileSync } from 'fs';
 import bodyParser from 'body-parser';
-import { StoreTypeDef } from './types/store';
-import resolvers from './resolvers';
+import cors from 'cors';
+import express from 'express';
 import gql from 'graphql-tag';
+import http from 'http';
+
+import resolvers from './resolvers';
 
 interface MyContext {
   token?: string;
 }
 
-// Required logic for integrating with Express
 const app = express();
+// Required logic for integrating with Express
 // httpServer handles incoming requests to our Express app.
 // Below, we tell Apollo Server to "drain" this httpServer,
 // enabling our servers to shut down gracefully.
