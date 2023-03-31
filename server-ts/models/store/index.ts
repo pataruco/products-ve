@@ -15,6 +15,35 @@ interface GeoJson {
   coordinates: [number, number];
 }
 
+const fromSqlToStore = ({
+  store_id: id,
+  geog,
+  name,
+  address,
+  created_at: createdAt,
+  updatedd_at: updatedAt,
+}: StoreRow) => {
+  const { coordinates } = Geometry.parse(
+    Buffer.from(geog, 'hex'),
+  ).toGeoJSON() as GeoJson;
+
+  const [lng, lat] = coordinates;
+
+  const store: Store = {
+    id,
+    name,
+    address,
+    coordinates: {
+      lat,
+      lng,
+    },
+    createdAt,
+    updatedAt,
+  };
+
+  return store;
+};
+
 export const getStoreById = async (
   _parent: unknown,
   { id }: { id: Store['id'] },
@@ -23,31 +52,5 @@ export const getStoreById = async (
     `SELECT * from stores WHERE store_id = '${id}'`,
   );
 
-  const { store_id, geog, name, address, created_at, updatedd_at } = rows[0];
-
-  const { coordinates } = Geometry.parse(
-    Buffer.from(geog, 'hex'),
-  ).toGeoJSON() as GeoJson;
-
-  const [lng, lat] = coordinates;
-
-  const store: Store = {
-    id: store_id,
-    name,
-    address,
-    coordinates: {
-      lat,
-      lng,
-    },
-    createdAt: created_at,
-    updatedAt: updatedd_at,
-  };
-
-  return store;
+  return fromSqlToStore(rows[0]);
 };
-
-// export const createStore = async ({ name, address, coordinates }: Store) => {
-//   const { lat, lng } = coordinates;
-
-//   const { rows } = await query(`SELECT * from stores WHERE store_id = $1`);
-// };
