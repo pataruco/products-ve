@@ -1,4 +1,4 @@
-name: ui checks
+name: server-ts checks
 run-name: ${{ github.actor }} is linting and runnings tests for server-ts
 on:
   pull_request:
@@ -24,7 +24,7 @@ jobs:
         uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
-          version: 8
+          version: 7
           run_install: false
 
       - name: Get pnpm store directory
