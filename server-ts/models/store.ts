@@ -1,5 +1,5 @@
-import { query } from '../../db/index.js';
-import { Store } from '../../types/store/index.js';
+import { Store } from '../__generated__/resolvers-types';
+import { query } from '../db';
 import { Geometry } from 'wkx';
 
 interface StoreRow {
@@ -7,8 +7,8 @@ interface StoreRow {
   geog: string;
   name: string;
   address: string;
-  created_at: Date;
-  updatedd_at: Date;
+  created_at: string;
+  updatedd_at: string;
 }
 
 interface GeoJson {
