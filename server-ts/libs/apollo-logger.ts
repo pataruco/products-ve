@@ -37,25 +37,25 @@ const apolloLogger = ({
 
   async invalidRequestWasReceived({ error }) {
     logger.error({
+      error,
       message: 'invalidRequestWasReceived',
       service: Service.SERVER,
-      error,
     });
   },
 
   async startupDidFail({ error }) {
     logger.error({
+      error,
       message: 'startupDidFail',
       service: Service.SERVER,
-      error,
     });
   },
 
   async unexpectedErrorProcessingRequest({ error }) {
     logger.error({
+      error,
       message: 'unexpectedErrorProcessingRequest',
       service: Service.SERVER,
-      error,
     });
   },
 
@@ -71,8 +71,8 @@ const apolloLogger = ({
       async didResolveOperation({ metrics, operationName }) {
         didResolveOperation &&
           logger.info({
-            message: 'graphql-query',
             event: 'didResolveOperation',
+            message: 'graphql-query',
             metrics,
             operationName,
             service: Service.SERVER,
@@ -133,12 +133,12 @@ const apolloLogger = ({
             } = requestContext;
 
             logger.info({
-              event: 'request',
-              operationName,
-              variables: variables || {},
               duration,
-              service: Service.SERVER,
+              event: 'request',
               message: 'graphql-query',
+              operationName,
+              service: Service.SERVER,
+              variables: variables || {},
             });
           }
         }
