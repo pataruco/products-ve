@@ -3,7 +3,7 @@ import type {
   GraphQLRequestListener,
 } from '@apollo/server';
 import { Context } from '../types/context';
-import logger, { Tag } from './logger';
+import logger from './logger';
 import { GRAPHQL_PATH } from '../config';
 
 const ignoredOps = ['IntrospectionQuery'];
@@ -25,13 +25,18 @@ const apolloLogger = ({
   parsingDidStart = false,
   responseForOperation = false,
   validationDidStart = false,
-  willSendResponse = false,
+  willSendResponse = true,
 }: ApolloLoggerOptions): ApolloServerPlugin<Context> => ({
   async serverWillStart(_service) {
-    logger.info({
-      message: `Server started 📡: ${GRAPHQL_PATH}`,
-      label: Tag.SERVER,
-    });
+    logger.info(`Server started 📡: ${GRAPHQL_PATH}`);
+  },
+
+  async invalidRequestWasReceived({ error }) {
+    logger.error(`Server invalidRequestWasReceived, Error: ${error.message}`);
+  },
+
+  async startupDidFail({ error }) {
+    logger.error(`Server startupDidFail, Error: ${error.message}`);
   },
 
   async unexpectedErrorProcessingRequest({ requestContext, error }) {
@@ -40,69 +45,73 @@ const apolloLogger = ({
     );
   },
 
-  // async requestDidStart(requestContext) {
-  //   const ignore = ignoredOps.includes(requestContext.operationName || '');
-  //   if (!ignore) {
-  //     const query = requestContext.request.query?.replace(/\n/g, '');
-  //     const variables = Object.keys(requestContext.request.variables || {});
-  //     logger.info({
-  //       event: 'request',
-  //       operationName: requestContext.operationName,
-  //       query,
-  //       variables,
-  //     });
-  //   }
-  //   const handlers: GraphQLRequestListener<Context> = {
-  //     async didEncounterErrors({ errors }) {
-  //       didEncounterErrors && logger.error({ event: 'errors', errors });
-  //     },
+  async requestDidStart(_requestContext) {
+    const start = Date.now();
 
-  //     async didResolveOperation({ metrics, operationName }) {
-  //       didResolveOperation &&
-  //         logger.info({
-  //           event: 'didResolveOperation',
-  //           metrics,
-  //           operationName,
-  //         });
-  //     },
+    const handlers: GraphQLRequestListener<Context> = {
+      async didEncounterErrors({ errors }) {
+        didEncounterErrors && logger.error({ event: 'errors', errors });
+      },
 
-  //     async executionDidStart({ metrics }) {
-  //       executionDidStart &&
-  //         logger.info({
-  //           event: 'executionDidStart',
-  //           metrics,
-  //         });
-  //     },
+      async didResolveOperation({ metrics, operationName }) {
+        didResolveOperation &&
+          logger.info({
+            event: 'didResolveOperation',
+            metrics,
+            operationName,
+          });
+      },
 
-  //     async parsingDidStart({ metrics }) {
-  //       parsingDidStart && logger.info({ event: 'parsingDidStart', metrics });
-  //     },
+      async executionDidStart({ operationName }) {
+        executionDidStart &&
+          logger.info({
+            event: 'executionDidStart',
+            operationName,
+          });
+      },
 
-  //     async responseForOperation({ metrics, operationName }) {
-  //       responseForOperation &&
-  //         logger.info({
-  //           event: 'responseForOperation',
-  //           metrics,
-  //           operationName,
-  //         });
-  //       return null;
-  //     },
+      async parsingDidStart({ metrics }) {
+        parsingDidStart && logger.info({ event: 'parsingDidStart', metrics });
+      },
 
-  //     async validationDidStart({ metrics }) {
-  //       validationDidStart && logger.info({ event: '', metrics });
-  //     },
+      async responseForOperation({ operationName }) {
+        responseForOperation &&
+          logger.info({
+            event: 'responseForOperation',
+            operationName,
+          });
+        return null;
+      },
 
-  //     async willSendResponse({ metrics, response }) {
-  //       willSendResponse &&
-  //         logger.info({
-  //           event: 'response',
-  //           metrics,
-  //           response,
-  //         });
-  //     },
-  //   };
-  //   return handlers;
-  // },
+      async validationDidStart({ operationName }) {
+        validationDidStart &&
+          logger.info({ event: 'validationDidStart', operationName });
+      },
+
+      async willSendResponse(requestContext) {
+        const duration = Date.now() - start;
+        if (willSendResponse) {
+          const ignore = ignoredOps.includes(
+            requestContext.operationName || '',
+          );
+          if (!ignore) {
+            const {
+              operationName,
+              request: { variables },
+            } = requestContext;
+
+            logger.info({
+              event: 'request',
+              operationName,
+              variables: variables || {},
+              duration,
+            });
+          }
+        }
+      },
+    };
+    return handlers;
+  },
 });
 
 export default apolloLogger;

@@ -1,24 +1,29 @@
 // Copy/pasta from winston docs
 import winston from 'winston';
 const { createLogger, format, transports } = winston;
-const { combine, timestamp, prettyPrint, json, colorize, label } = format;
+const { combine, timestamp, prettyPrint, json, colorize } = format;
 
-export enum Tag {
-  SERVER = 'SERVER',
-  DATABASE = 'DATABASE',
+type Service = 'SERVER' | 'DATABASE';
+
+interface TypeOfService {
+  service: Service;
 }
+
+// Taken from https://github.com/winstonjs/winston#creating-custom-formats
+const addServiceLabel = format(
+  (info, { service = 'SERVER' }: TypeOfService) => {
+    return { ...info, service };
+  },
+);
 
 const logger = createLogger({
   format: combine(
+    addServiceLabel(),
     timestamp(),
     prettyPrint(),
     json(),
     colorize({
       all: true,
-    }),
-    label({
-      label: 'SERVICE',
-      message: false,
     }),
   ),
   transports: [new transports.Console()],

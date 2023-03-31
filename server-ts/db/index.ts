@@ -20,7 +20,9 @@ export const getClient = async () => {
     const release = client.release;
     // set a timeout of 5 seconds, after which we will log this client's last query
     const timeout = setTimeout(() => {
-      logger.error('A client has been checked out for more than 5 seconds!');
+      logger.data('A client has been checked out for more than 5 seconds!', {
+        service: 'DATABASE',
+      });
     }, 5000);
 
     client.release = () => {
