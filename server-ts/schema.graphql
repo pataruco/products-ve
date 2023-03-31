@@ -1,0 +1,21 @@
+# Types
+
+type Coordinates {
+  lat: Float
+  lng: Float
+}
+
+type Store {
+  id: ID
+  coordinates: Coordinates
+  address: String
+  name: String
+  createdAt: String
+  updatedAt: String
+}
+
+# Queries
+
+type Query {
+  store(id: String!): Store
+}

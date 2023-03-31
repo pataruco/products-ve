@@ -1,4 +1,5 @@
 import { ApolloServer } from '@apollo/server';
+import { readFileSync } from 'fs';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express';
@@ -7,6 +8,7 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { StoreTypeDef } from './types/store';
 import resolvers from './resolvers';
+import gql from 'graphql-tag';
 
 interface MyContext {
   token?: string;
@@ -19,15 +21,19 @@ const app = express();
 // enabling our servers to shut down gracefully.
 const httpServer = http.createServer(app);
 
-// Same ApolloServer initialization as before, plus the drain plugin
-// for our httpServer.
-const server = new ApolloServer<MyContext>({
-  typeDefs: StoreTypeDef,
-  resolvers,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-});
-
 const main = async () => {
+  let typeDefs = gql(
+    readFileSync('schema.graphql', {
+      encoding: 'utf-8',
+    }),
+  );
+  // Same ApolloServer initialization as before, plus the drain plugin
+  // for our httpServer.
+  const server = new ApolloServer<MyContext>({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
   // Ensure we wait for our server to start
   await server.start();
   // Set up our Express middleware to handle CORS, body parsing,
