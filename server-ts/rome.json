@@ -15,7 +15,7 @@
     "indentStyle": "tab",
     "indentSize": 2,
     "lineWidth": 80,
-    "ignore": []
+    "ignore": ["tsconfig.json"]
   },
   "javascript": {
     "formatter": {

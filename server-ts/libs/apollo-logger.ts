@@ -3,9 +3,9 @@ import type {
   GraphQLRequestListener,
 } from '@apollo/server';
 
+import { GRAPHQL_PATH } from '../config';
 import { Context } from '../types/context';
 import logger, { Service } from './logger';
-import { GRAPHQL_PATH } from '../config';
 
 const ignoredOps = ['IntrospectionQuery'];
 
@@ -37,7 +37,7 @@ const apolloLogger = ({
 
   async invalidRequestWasReceived({ error }) {
     logger.error({
-      message: `invalidRequestWasReceived`,
+      message: 'invalidRequestWasReceived',
       service: Service.SERVER,
       error,
     });
@@ -45,7 +45,7 @@ const apolloLogger = ({
 
   async startupDidFail({ error }) {
     logger.error({
-      message: `startupDidFail`,
+      message: 'startupDidFail',
       service: Service.SERVER,
       error,
     });
@@ -53,7 +53,7 @@ const apolloLogger = ({
 
   async unexpectedErrorProcessingRequest({ error }) {
     logger.error({
-      message: `unexpectedErrorProcessingRequest`,
+      message: 'unexpectedErrorProcessingRequest',
       service: Service.SERVER,
       error,
     });

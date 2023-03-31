@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "codegen": "graphql-codegen",
-    "start": "pnpm codegen && pnpm ts-node ./index.ts"
+    "start": "pnpm codegen && pnpm ts-node ./index.ts",
+    "format": "pnpm rome format *.ts",
+    "lint": "pnpm rome check ."
   },
   "keywords": [],
   "author": "",

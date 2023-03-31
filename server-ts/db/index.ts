@@ -1,6 +1,6 @@
+import logger, { Service } from '../libs/logger';
 import type { PoolConfig, QueryConfig } from 'pg';
 import pg from 'pg';
-import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
