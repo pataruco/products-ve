@@ -46,6 +46,7 @@ export const getClient = async () => {
   }
 };
 
+// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const query = async (text: string | QueryConfig<any>, params?: any) => {
   try {
     const start = Date.now();
