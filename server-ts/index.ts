@@ -1,17 +1,17 @@
 import { ApolloServer } from '@apollo/server';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@apollo/server/express4';
-import { readFileSync } from 'fs';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import { readFileSync } from 'fs';
 import gql from 'graphql-tag';
 import http from 'http';
 
+import { PORT } from './config';
+import apolloLogger from './libs/apollo-logger';
 import resolvers from './resolvers';
 import { Context } from './types/context';
-import apolloLogger from './libs/apollo-logger';
-import { PORT } from './config';
 
 const app = express();
 // Required logic for integrating with Express
@@ -21,7 +21,7 @@ const app = express();
 const httpServer = http.createServer(app);
 
 const main = async () => {
-  let typeDefs = gql(
+  const typeDefs = gql(
     readFileSync('schema.graphql', {
       encoding: 'utf-8',
     }),

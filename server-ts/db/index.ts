@@ -1,6 +1,6 @@
+import logger, { Service } from '../libs/logger';
 import type { PoolConfig, QueryConfig } from 'pg';
 import pg from 'pg';
-import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
@@ -46,6 +46,7 @@ export const getClient = async () => {
   }
 };
 
+// rome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const query = async (text: string | QueryConfig<any>, params?: any) => {
   try {
     const start = Date.now();

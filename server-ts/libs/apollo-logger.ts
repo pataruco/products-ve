@@ -3,9 +3,9 @@ import type {
   GraphQLRequestListener,
 } from '@apollo/server';
 
+import { GRAPHQL_PATH } from '../config';
 import { Context } from '../types/context';
 import logger, { Service } from './logger';
-import { GRAPHQL_PATH } from '../config';
 
 const ignoredOps = ['IntrospectionQuery'];
 
@@ -37,25 +37,25 @@ const apolloLogger = ({
 
   async invalidRequestWasReceived({ error }) {
     logger.error({
-      message: `invalidRequestWasReceived`,
-      service: Service.SERVER,
       error,
+      message: 'invalidRequestWasReceived',
+      service: Service.SERVER,
     });
   },
 
   async startupDidFail({ error }) {
     logger.error({
-      message: `startupDidFail`,
-      service: Service.SERVER,
       error,
+      message: 'startupDidFail',
+      service: Service.SERVER,
     });
   },
 
   async unexpectedErrorProcessingRequest({ error }) {
     logger.error({
-      message: `unexpectedErrorProcessingRequest`,
-      service: Service.SERVER,
       error,
+      message: 'unexpectedErrorProcessingRequest',
+      service: Service.SERVER,
     });
   },
 
@@ -71,8 +71,8 @@ const apolloLogger = ({
       async didResolveOperation({ metrics, operationName }) {
         didResolveOperation &&
           logger.info({
-            message: 'graphql-query',
             event: 'didResolveOperation',
+            message: 'graphql-query',
             metrics,
             operationName,
             service: Service.SERVER,
@@ -133,12 +133,12 @@ const apolloLogger = ({
             } = requestContext;
 
             logger.info({
-              event: 'request',
-              operationName,
-              variables: variables || {},
               duration,
-              service: Service.SERVER,
+              event: 'request',
               message: 'graphql-query',
+              operationName,
+              service: Service.SERVER,
+              variables: variables || {},
             });
           }
         }
