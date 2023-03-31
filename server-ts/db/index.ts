@@ -1,17 +1,19 @@
-import type { ClientConfig, QueryConfig } from 'pg';
+import type { PoolConfig, QueryConfig } from 'pg';
 import pg from 'pg';
-import logger from '../libs/logger';
+import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
-const dbConfig: ClientConfig = {
+const poolConfig: PoolConfig = {
   host: '127.0.0.1',
   user: 'pataruco',
   password: 'pataruco',
   database: 'productsdb',
+  idleTimeoutMillis: 30000,
+  max: 20,
 };
 
-const pool = new Pool(dbConfig);
+const pool = new Pool(poolConfig);
 
 export const getClient = async () => {
   try {
@@ -20,8 +22,9 @@ export const getClient = async () => {
     const release = client.release;
     // set a timeout of 5 seconds, after which we will log this client's last query
     const timeout = setTimeout(() => {
-      logger.data('A client has been checked out for more than 5 seconds!', {
-        service: 'DATABASE',
+      logger.info({
+        message: 'A client has been checked out for more than 5 seconds!',
+        service: Service.DATABASE,
       });
     }, 5000);
 
@@ -49,7 +52,14 @@ export const query = async (text: string | QueryConfig<any>, params?: any) => {
     const client = await getClient();
     const res = await client.query(text, params);
     const duration = Date.now() - start;
-    logger.info('QUERY', { text, duration, rows: res.rowCount });
+    logger.info({
+      message: 'database-query',
+      service: Service.DATABASE,
+      text,
+      duration,
+      rows: res.rowCount,
+    });
+
     return res;
   } catch (error) {
     const dbError = new Error(
