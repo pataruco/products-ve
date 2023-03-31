@@ -1,4 +1,8 @@
-import { Store } from '../__generated__/resolvers-types';
+import {
+  Coordinates,
+  Store,
+  StoresInput,
+} from '../__generated__/resolvers-types';
 import { query } from '../db';
 import { Geometry } from 'wkx';
 
@@ -44,13 +48,44 @@ const fromSqlToStore = ({
   return store;
 };
 
+interface GetStoreByIdArgs {
+  id: Store['id'];
+}
+
 export const getStoreById = async (
   _parent: unknown,
-  { id }: { id: Store['id'] },
+  { id }: GetStoreByIdArgs,
 ) => {
   const { rows }: { rows: StoreRow[] } = await query(
     `SELECT * from stores WHERE store_id = '${id}'`,
   );
 
   return fromSqlToStore(rows[0]);
+};
+
+interface GetStoresFromArgs {
+  from: {
+    distance: StoresInput['distance'];
+    coordinates: StoresInput['coordinates'];
+  };
+}
+
+export const getStoresFrom = async (
+  _parent: unknown,
+  { from: { distance, coordinates } }: GetStoresFromArgs,
+) => {
+  const { lat, lng } = coordinates;
+
+  const { rows }: { rows: StoreRow[] } = await query(
+    `SELECT
+          *
+        FROM
+          stores
+        WHERE
+          ST_DWithin (geog,
+            ST_GeographyFromText ('POINT(${lng} ${lat})'),
+            ${distance})`,
+  );
+
+  return rows.map(fromSqlToStore);
 };

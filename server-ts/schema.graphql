@@ -1,5 +1,4 @@
 # Types
-
 type Coordinates {
   lat: Float
   lng: Float
@@ -16,6 +15,17 @@ type Store {
 
 # Queries
 
+input CoordinatesInput {
+  lat: Float
+  lng: Float
+}
+
+input StoresInput {
+  distance: Int!
+  coordinates: CoordinatesInput!
+}
+
 type Query {
   store(id: String!): Store
+  stores(from: StoresInput!): [Store]
 }

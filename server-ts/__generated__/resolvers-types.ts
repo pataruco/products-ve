@@ -24,13 +24,23 @@ export type Coordinates = {
   lng?: Maybe<Scalars['Float']>;
 };
 
+export type CoordinatesInput = {
+  lat?: InputMaybe<Scalars['Float']>;
+  lng?: InputMaybe<Scalars['Float']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   store?: Maybe<Store>;
+  stores?: Maybe<Array<Maybe<Store>>>;
 };
 
 export type QueryStoreArgs = {
   id: Scalars['String'];
+};
+
+export type QueryStoresArgs = {
+  from: StoresInput;
 };
 
 export type Store = {
@@ -41,4 +51,9 @@ export type Store = {
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['String']>;
+};
+
+export type StoresInput = {
+  coordinates: CoordinatesInput;
+  distance: Scalars['Int'];
 };
