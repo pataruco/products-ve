@@ -1,5 +1,6 @@
 import type { ClientConfig, QueryConfig } from 'pg';
 import pg from 'pg';
+import logger from '../libs/logger';
 
 const { Pool } = pg;
 
@@ -19,7 +20,7 @@ export const getClient = async () => {
     const release = client.release;
     // set a timeout of 5 seconds, after which we will log this client's last query
     const timeout = setTimeout(() => {
-      console.error('A client has been checked out for more than 5 seconds!');
+      logger.error('A client has been checked out for more than 5 seconds!');
     }, 5000);
 
     client.release = () => {
@@ -46,7 +47,7 @@ export const query = async (text: string | QueryConfig<any>, params?: any) => {
     const client = await getClient();
     const res = await client.query(text, params);
     const duration = Date.now() - start;
-    console.log('executed query', { text, duration, rows: res.rowCount });
+    logger.info('QUERY', { text, duration, rows: res.rowCount });
     return res;
   } catch (error) {
     const dbError = new Error(

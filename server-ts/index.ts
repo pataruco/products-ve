@@ -9,10 +9,14 @@ import gql from 'graphql-tag';
 import http from 'http';
 
 import resolvers from './resolvers';
+import logger from './libs/logger';
 
-interface MyContext {
+interface Context {
   token?: string;
 }
+
+const HOST = process.env.HOST || '127.0.0.1';
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 // Required logic for integrating with Express
@@ -29,7 +33,7 @@ const main = async () => {
   );
   // Same ApolloServer initialization as before, plus the drain plugin
   // for our httpServer.
-  const server = new ApolloServer<MyContext>({
+  const server = new ApolloServer<Context>({
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
@@ -50,8 +54,10 @@ const main = async () => {
   );
   // Modified server startup
 
-  await httpServer.listen({ port: 4000 });
-  console.log(`🚀 Server ready at http://localhost:4000/`);
+  const GRAPHQL_PATH = `http://${HOST}:${PORT}`;
+
+  await httpServer.listen({ port: PORT });
+  logger.info(`server listening 📡: ${GRAPHQL_PATH}`);
 };
 
 main();
