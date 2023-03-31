@@ -9,14 +9,9 @@ import gql from 'graphql-tag';
 import http from 'http';
 
 import resolvers from './resolvers';
-import logger from './libs/logger';
-
-interface Context {
-  token?: string;
-}
-
-const HOST = process.env.HOST || '127.0.0.1';
-const PORT = process.env.PORT || 4000;
+import { Context } from './types/context';
+import apolloLogger from './libs/apollo-logger';
+import { PORT } from './config';
 
 const app = express();
 // Required logic for integrating with Express
@@ -36,7 +31,10 @@ const main = async () => {
   const server = new ApolloServer<Context>({
     typeDefs,
     resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      apolloLogger({}),
+    ],
   });
   // Ensure we wait for our server to start
   await server.start();
@@ -54,10 +52,7 @@ const main = async () => {
   );
   // Modified server startup
 
-  const GRAPHQL_PATH = `http://${HOST}:${PORT}`;
-
   await httpServer.listen({ port: PORT });
-  logger.info(`server listening 📡: ${GRAPHQL_PATH}`);
 };
 
 main();
