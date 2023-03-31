@@ -5,8 +5,8 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { StoreTypeDef } from './types/store/index.js';
-import resolvers from './resolvers/store/index.js';
+import { StoreTypeDef } from './types/store';
+import resolvers from './resolvers';
 
 interface MyContext {
   token?: string;
@@ -14,7 +14,7 @@ interface MyContext {
 
 // Required logic for integrating with Express
 const app = express();
-// Our httpServer handles incoming requests to our Express app.
+// httpServer handles incoming requests to our Express app.
 // Below, we tell Apollo Server to "drain" this httpServer,
 // enabling our servers to shut down gracefully.
 const httpServer = http.createServer(app);
@@ -26,24 +26,26 @@ const server = new ApolloServer<MyContext>({
   resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
-// Ensure we wait for our server to start
-await server.start();
 
-// Set up our Express middleware to handle CORS, body parsing,
-// and our expressMiddleware function.
-app.use(
-  '/',
-  cors<cors.CorsRequest>(),
-  bodyParser.json(),
-  // expressMiddleware accepts the same arguments:
-  // an Apollo Server instance and optional configuration options
-  expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
-  }),
-);
+const main = async () => {
+  // Ensure we wait for our server to start
+  await server.start();
+  // Set up our Express middleware to handle CORS, body parsing,
+  // and our expressMiddleware function.
+  app.use(
+    '/',
+    cors<cors.CorsRequest>(),
+    bodyParser.json(),
+    // expressMiddleware accepts the same arguments:
+    // an Apollo Server instance and optional configuration options
+    expressMiddleware(server, {
+      context: async ({ req }) => ({ token: req.headers.token }),
+    }),
+  );
+  // Modified server startup
 
-// Modified server startup
-await new Promise<void>((resolve) =>
-  httpServer.listen({ port: 4000 }, resolve),
-);
-console.log(`🚀 Server ready at http://localhost:4000/`);
+  await httpServer.listen({ port: 4000 });
+  console.log(`🚀 Server ready at http://localhost:4000/`);
+};
+
+main();

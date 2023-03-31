@@ -1,5 +1,5 @@
-import { query } from '../../db/index.js';
-import { Store } from '../../types/store/index.js';
+import { query } from '../db';
+import { Store } from '../types/store';
 import { Geometry } from 'wkx';
 
 interface StoreRow {
