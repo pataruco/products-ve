@@ -9,10 +9,9 @@ import gql from 'graphql-tag';
 import http from 'http';
 
 import resolvers from './resolvers';
-
-interface MyContext {
-  token?: string;
-}
+import { Context } from './types/context';
+import apolloLogger from './libs/apollo-logger';
+import { PORT } from './config';
 
 const app = express();
 // Required logic for integrating with Express
@@ -29,10 +28,13 @@ const main = async () => {
   );
   // Same ApolloServer initialization as before, plus the drain plugin
   // for our httpServer.
-  const server = new ApolloServer<MyContext>({
+  const server = new ApolloServer<Context>({
     typeDefs,
     resolvers,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      apolloLogger({}),
+    ],
   });
   // Ensure we wait for our server to start
   await server.start();
@@ -50,8 +52,7 @@ const main = async () => {
   );
   // Modified server startup
 
-  await httpServer.listen({ port: 4000 });
-  console.log(`🚀 Server ready at http://localhost:4000/`);
+  await httpServer.listen({ port: PORT });
 };
 
 main();
