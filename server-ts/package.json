@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "codegen": "graphql-codegen",
+    "codegen": "graphql-codegen && pnpm format ./__generated__/resolvers-types.ts --write",
     "start": "pnpm codegen && pnpm ts-node ./index.ts",
-    "format": "pnpm rome format *.ts --write",
+    "format": "pnpm rome format *.ts",
     "lint": "pnpm rome check ."
+  },
+  "scriptsComments": {
+    "codegen": "Generate TS types from schema.graphql and then format the generated file with rome"
   },
   "keywords": [],
   "author": "",
