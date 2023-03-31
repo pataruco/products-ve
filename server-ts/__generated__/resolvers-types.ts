@@ -29,6 +29,15 @@ export type CoordinatesInput = {
   lng?: InputMaybe<Scalars['Float']>;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  store?: Maybe<Store>;
+};
+
+export type MutationStoreArgs = {
+  store: StoreInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   store?: Maybe<Store>;
@@ -40,7 +49,7 @@ export type QueryStoreArgs = {
 };
 
 export type QueryStoresArgs = {
-  from: StoresInput;
+  from: StoresFromInput;
 };
 
 export type Store = {
@@ -53,7 +62,13 @@ export type Store = {
   updatedAt?: Maybe<Scalars['String']>;
 };
 
-export type StoresInput = {
+export type StoreInput = {
+  address?: InputMaybe<Scalars['String']>;
+  coordinates: CoordinatesInput;
+  name: Scalars['String'];
+};
+
+export type StoresFromInput = {
   coordinates: CoordinatesInput;
   distance: Scalars['Int'];
 };

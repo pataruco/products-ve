@@ -14,18 +14,29 @@ type Store {
 }
 
 # Queries
-
 input CoordinatesInput {
   lat: Float
   lng: Float
 }
 
-input StoresInput {
+input StoresFromInput {
   distance: Int!
   coordinates: CoordinatesInput!
 }
 
 type Query {
   store(id: String!): Store
-  stores(from: StoresInput!): [Store]
+  stores(from: StoresFromInput!): [Store]
+}
+
+# Mutations
+
+input StoreInput {
+  coordinates: CoordinatesInput!
+  address: String
+  name: String!
+}
+
+type Mutation {
+  store(store: StoreInput!): Store
 }

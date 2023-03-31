@@ -1,7 +1,7 @@
 import {
-  Coordinates,
   Store,
-  StoresInput,
+  StoresFromInput,
+  StoreInput,
 } from '../__generated__/resolvers-types';
 import { query } from '../db';
 import { Geometry } from 'wkx';
@@ -65,8 +65,8 @@ export const getStoreById = async (
 
 interface GetStoresFromArgs {
   from: {
-    distance: StoresInput['distance'];
-    coordinates: StoresInput['coordinates'];
+    distance: StoresFromInput['distance'];
+    coordinates: StoresFromInput['coordinates'];
   };
 }
 
@@ -88,4 +88,24 @@ export const getStoresFrom = async (
   );
 
   return rows.map(fromSqlToStore);
+};
+
+export const createStore = async (
+  _parent: unknown,
+  { coordinates, name, address }: StoreInput,
+) => {
+  const { lat, lng } = coordinates;
+
+  const { rows }: { rows: StoreRow[] } = await query(
+    `INSERT INTO
+        stores (geog, name, address)
+       VALUES
+        (
+          ST_GeographyFromText('POINT(${lng} ${lat})'),
+          '${name}',
+          '${address}'
+        )`,
+  );
+
+  return fromSqlToStore(rows[0]);
 };
