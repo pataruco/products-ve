@@ -1,4 +1,5 @@
 import { Geometry } from 'wkx';
+import Joi from 'joi';
 
 import {
   MutationStoreArgs,
@@ -6,6 +7,7 @@ import {
   StoresFromInput,
 } from '../__generated__/resolvers-types';
 import { query } from '../db';
+import { GraphQLError } from 'graphql';
 
 interface StoreRow {
   store_id: string;
@@ -53,10 +55,29 @@ interface GetStoreByIdArgs {
   id: Store['id'];
 }
 
+const getStoreByIdSchema = Joi.object({
+  id: Joi.string()
+    .guid({
+      version: ['uuidv4', 'uuidv5'],
+    })
+    .required(),
+});
+
 export const getStoreById = async (
   _parent: unknown,
   { id }: GetStoreByIdArgs,
 ) => {
+  const { error } = getStoreByIdSchema.validate({ id });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'FORBIDDEN',
+      },
+    });
+  }
+
   const { rows }: { rows: StoreRow[] } = await query(
     `SELECT * from stores WHERE store_id = '${id}'`,
   );
@@ -71,11 +92,36 @@ interface GetStoresFromArgs {
   };
 }
 
+const getStoresFromSchema = Joi.object({
+  distance: Joi.number().integer().required(),
+  coordinates: {
+    lat: Joi.number(),
+    lng: Joi.number(),
+  },
+});
+
 export const getStoresFrom = async (
   _parent: unknown,
   { from: { distance, coordinates } }: GetStoresFromArgs,
 ) => {
   const { lat, lng } = coordinates;
+
+  const { error } = getStoresFromSchema.validate({
+    distance,
+    coordinates: {
+      lat,
+      lng,
+    },
+  });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'FORBIDDEN',
+      },
+    });
+  }
 
   const { rows }: { rows: StoreRow[] } = await query(
     `SELECT
