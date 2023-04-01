@@ -16,6 +16,7 @@ specifiers:
   graphql-tag: ^2.12.6
   joi: ^17.9.1
   pg: ^8.10.0
+  postgres-migrations: ^5.3.0
   rome: 12.0.0
   ts-node: ^10.9.1
   typescript: ^5.0.2
@@ -32,6 +33,7 @@ dependencies:
   graphql-tag: 2.12.6_graphql@16.6.0
   joi: 17.9.1
   pg: 8.10.0
+  postgres-migrations: 5.3.0
   winston: 3.8.2
   wkx: 0.5.0
 
@@ -3534,6 +3536,17 @@ packages:
     dependencies:
       xtend: 4.0.2
 
+  /postgres-migrations/5.3.0:
+    resolution: {integrity: sha512-gnTHWJZVWbW8T3mXIxJm1JRU853TqBVWkhgfsTJr7zqT3VexjRmJj9kNi96rVhfTezDU4FVW6pf701kLOZiKIA==}
+    engines: {node: '>10.17.0'}
+    hasBin: true
+    dependencies:
+      pg: 8.10.0
+      sql-template-strings: 2.2.2
+    transitivePeerDependencies:
+      - pg-native
+    dev: false
+
   /promise/7.3.1:
     resolution: {integrity: sha512-nolQXZ/4L+bP/UGlkfaIujX9BKxGwmQ9OT4mOt5yvy8iK1h3wqTEJCijzGANTCCl9nWjY41juyAn2K3Q1hLLTg==}
     dependencies:
@@ -3852,6 +3865,11 @@ packages:
     dependencies:
       tslib: 2.5.0
     dev: true
+
+  /sql-template-strings/2.2.2:
+    resolution: {integrity: sha512-UXhXR2869FQaD+GMly8jAMCRZ94nU5KcrFetZfWEMd+LVVG6y0ExgHAhatEcKZ/wk8YcKPdi+hiD2wm75lq3/Q==}
+    engines: {node: '>=4.0.0'}
+    dev: false
 
   /stack-trace/0.0.10:
     resolution: {integrity: sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==}
