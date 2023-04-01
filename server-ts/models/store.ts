@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+import Joi from 'joi';
 import { Geometry } from 'wkx';
 
 import {
@@ -53,10 +55,29 @@ interface GetStoreByIdArgs {
   id: Store['id'];
 }
 
+const getStoreByIdSchema = Joi.object({
+  id: Joi.string()
+    .guid({
+      version: ['uuidv4', 'uuidv5'],
+    })
+    .required(),
+});
+
 export const getStoreById = async (
   _parent: unknown,
   { id }: GetStoreByIdArgs,
 ) => {
+  const { error } = getStoreByIdSchema.validate({ id });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'VALIDATION_ERROR',
+      },
+    });
+  }
+
   const { rows }: { rows: StoreRow[] } = await query(
     `SELECT * from stores WHERE store_id = '${id}'`,
   );
@@ -71,11 +92,36 @@ interface GetStoresFromArgs {
   };
 }
 
+const getStoresFromSchema = Joi.object({
+  distance: Joi.number().integer().required(),
+  coordinates: {
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
+  },
+});
+
 export const getStoresFrom = async (
   _parent: unknown,
   { from: { distance, coordinates } }: GetStoresFromArgs,
 ) => {
   const { lat, lng } = coordinates;
+
+  const { error } = getStoresFromSchema.validate({
+    distance,
+    coordinates: {
+      lat,
+      lng,
+    },
+  });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'VALIDATION_ERROR',
+      },
+    });
+  }
 
   const { rows }: { rows: StoreRow[] } = await query(
     `SELECT
@@ -91,6 +137,15 @@ export const getStoresFrom = async (
   return rows.map(fromSqlToStore);
 };
 
+const createStoreSchema = Joi.object({
+  name: Joi.string().required().min(1),
+  address: Joi.string().required().min(1),
+  coordinates: {
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
+  },
+});
+
 export const createStore = async (
   _parent: unknown,
   {
@@ -101,6 +156,24 @@ export const createStore = async (
     },
   }: MutationStoreArgs,
 ) => {
+  const { error } = createStoreSchema.validate({
+    name,
+    address,
+    coordinates: {
+      lat,
+      lng,
+    },
+  });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'VALIDATION_ERROR',
+      },
+    });
+  }
+
   await query(
     `INSERT INTO
         stores (geog, name, address)
