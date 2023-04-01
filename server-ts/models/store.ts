@@ -1,5 +1,6 @@
-import { Geometry } from 'wkx';
+import { GraphQLError } from 'graphql';
 import Joi from 'joi';
+import { Geometry } from 'wkx';
 
 import {
   MutationStoreArgs,
@@ -7,7 +8,6 @@ import {
   StoresFromInput,
 } from '../__generated__/resolvers-types';
 import { query } from '../db';
-import { GraphQLError } from 'graphql';
 
 interface StoreRow {
   store_id: string;
@@ -73,7 +73,7 @@ export const getStoreById = async (
     throw new GraphQLError('Failed to get store due to validation errors', {
       originalError: error,
       extensions: {
-        code: 'FORBIDDEN',
+        code: 'VALIDATION_ERROR',
       },
     });
   }
@@ -95,8 +95,8 @@ interface GetStoresFromArgs {
 const getStoresFromSchema = Joi.object({
   distance: Joi.number().integer().required(),
   coordinates: {
-    lat: Joi.number(),
-    lng: Joi.number(),
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
   },
 });
 
@@ -118,7 +118,7 @@ export const getStoresFrom = async (
     throw new GraphQLError('Failed to get store due to validation errors', {
       originalError: error,
       extensions: {
-        code: 'FORBIDDEN',
+        code: 'VALIDATION_ERROR',
       },
     });
   }
@@ -137,6 +137,15 @@ export const getStoresFrom = async (
   return rows.map(fromSqlToStore);
 };
 
+const createStoreSchema = Joi.object({
+  name: Joi.string().required().min(1),
+  address: Joi.string().required().min(1),
+  coordinates: {
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
+  },
+});
+
 export const createStore = async (
   _parent: unknown,
   {
@@ -147,6 +156,24 @@ export const createStore = async (
     },
   }: MutationStoreArgs,
 ) => {
+  const { error } = createStoreSchema.validate({
+    name,
+    address,
+    coordinates: {
+      lat,
+      lng,
+    },
+  });
+
+  if (error) {
+    throw new GraphQLError('Failed to get store due to validation errors', {
+      originalError: error,
+      extensions: {
+        code: 'VALIDATION_ERROR',
+      },
+    });
+  }
+
   await query(
     `INSERT INTO
         stores (geog, name, address)
