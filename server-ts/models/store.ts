@@ -1,10 +1,11 @@
+import { Geometry } from 'wkx';
+
 import {
+  MutationStoreArgs,
   Store,
   StoresFromInput,
-  StoreInput,
 } from '../__generated__/resolvers-types';
 import { query } from '../db';
-import { Geometry } from 'wkx';
 
 interface StoreRow {
   store_id: string;
@@ -92,11 +93,15 @@ export const getStoresFrom = async (
 
 export const createStore = async (
   _parent: unknown,
-  { coordinates, name, address }: StoreInput,
+  {
+    store: {
+      coordinates: { lat, lng },
+      name,
+      address,
+    },
+  }: MutationStoreArgs,
 ) => {
-  const { lat, lng } = coordinates;
-
-  const { rows }: { rows: StoreRow[] } = await query(
+  await query(
     `INSERT INTO
         stores (geog, name, address)
        VALUES
@@ -105,6 +110,19 @@ export const createStore = async (
           '${name}',
           '${address}'
         )`,
+  );
+
+  const { rows }: { rows: StoreRow[] } = await query(
+    `SELECT
+	    *
+    FROM
+	    stores
+    WHERE
+      name = '${name}'
+      AND address = '${address}'
+      AND geog = ST_GeographyFromText('POINT(${lng} ${lat})')
+      ORDER BY created_at DESC
+  `,
   );
 
   return fromSqlToStore(rows[0]);

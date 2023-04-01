@@ -1,4 +1,4 @@
-import { getStoreById, getStoresFrom, createStore } from '../models/store';
+import { createStore, getStoreById, getStoresFrom } from '../models/store';
 
 const resolvers = {
   Query: {
