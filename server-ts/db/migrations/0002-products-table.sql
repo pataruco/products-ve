@@ -23,3 +23,20 @@ ALTER TABLE
   stores_products
 ADD
   FOREIGN KEY (products_product_id) REFERENCES products (product_id);
+
+INSERT INTO
+  products(name, brand)
+VALUES
+  ('Cocosette', 'Nestlé'),
+  ('Harina P.A.N.', 'Alimentos Polar');
+
+INSERT INTO
+  stores_products (stores_store_id, products_product_id)
+SELECT
+  store_id,
+  product_id
+FROM
+  stores,
+  products
+WHERE
+  products.name = 'Harina P.A.N.';
