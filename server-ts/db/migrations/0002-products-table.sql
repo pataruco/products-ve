@@ -1,6 +1,6 @@
 CREATE TABLE products (
   product_id uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
-  name varchar(255) NOT NULL,
+  name varchar(255) NOT NULL UNIQUE,
   brand varchar(255),
   created_at timestamp NOT NULL DEFAULT (now()),
   updated timestamp NOT NULL DEFAULT (current_timestamp)
