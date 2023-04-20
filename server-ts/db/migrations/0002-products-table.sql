@@ -30,6 +30,7 @@ VALUES
   ('Cocosette', 'Nestlé'),
   ('Harina P.A.N.', 'Alimentos Polar');
 
+-- Insert Harina PAN in all
 INSERT INTO
   stores_products (stores_store_id, products_product_id)
 SELECT
@@ -40,3 +41,22 @@ FROM
   products
 WHERE
   products.name = 'Harina P.A.N.';
+
+-- Insert Cocosette in just few
+INSERT INTO
+  stores_products (stores_store_id, products_product_id)
+SELECT
+  store_id,
+  product_id
+FROM
+  stores,
+  products
+WHERE
+  products.name = 'Cocosette'
+  AND ST_DWithin(
+    stores.geog,
+    -- London
+    ST_GeographyFromText('POINT(-0.1275 51.50722)'),
+    -- Metres
+    10000
+  );
