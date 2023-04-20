@@ -35,7 +35,7 @@ input CoordinatesInput {
 input StoresFromInput {
   distance: Int!
   coordinates: CoordinatesInput!
-  product: ProductName!
+  product: ProductName
 }
 
 type Query {

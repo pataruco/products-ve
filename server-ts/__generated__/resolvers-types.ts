@@ -38,6 +38,20 @@ export type MutationStoreArgs = {
   store: StoreInput;
 };
 
+export type Product = {
+  __typename?: 'Product';
+  brand: Scalars['String'];
+  createdAt?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  name: ProductName;
+  updatedAt?: Maybe<Scalars['String']>;
+};
+
+export enum ProductName {
+  Cocosette = 'COCOSETTE',
+  Pan = 'PAN',
+}
+
 export type Query = {
   __typename?: 'Query';
   store?: Maybe<Store>;
@@ -71,4 +85,5 @@ export type StoreInput = {
 export type StoresFromInput = {
   coordinates: CoordinatesInput;
   distance: Scalars['Int'];
+  product?: InputMaybe<ProductName>;
 };
