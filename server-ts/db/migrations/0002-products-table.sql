@@ -1,6 +1,7 @@
 CREATE TABLE products (
   product_id uuid PRIMARY KEY DEFAULT (uuid_generate_v4 ()),
-  name varchar(255) NOT NULL UNIQUE,
+  name varchar(255) NOT NULL,
+  reference varchar(255) NOT NULL UNIQUE,
   brand varchar(255),
   created_at timestamp NOT NULL DEFAULT (now()),
   updated timestamp NOT NULL DEFAULT (current_timestamp)
@@ -25,10 +26,10 @@ ADD
   FOREIGN KEY (products_product_id) REFERENCES products (product_id);
 
 INSERT INTO
-  products(name, brand)
+  products(name, brand, reference)
 VALUES
-  ('Cocosette', 'Nestlé'),
-  ('Harina P.A.N.', 'Alimentos Polar');
+  ('Cocosette', 'Nestlé', 'COCOSETTE'),
+  ('Harina P.A.N.', 'Alimentos Polar', 'PAN');
 
 -- Insert Harina PAN in all
 INSERT INTO
@@ -40,7 +41,7 @@ FROM
   stores,
   products
 WHERE
-  products.name = 'Harina P.A.N.';
+  products.reference = 'PAN';
 
 -- Insert Cocosette in just few
 INSERT INTO
@@ -52,7 +53,7 @@ FROM
   stores,
   products
 WHERE
-  products.name = 'Cocosette'
+  products.reference = 'COCOSETTE'
   AND ST_DWithin(
     stores.geog,
     -- London
