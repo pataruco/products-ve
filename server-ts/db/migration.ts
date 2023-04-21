@@ -14,6 +14,10 @@ const main = async () => {
     await migrate({ client }, migrationFolder);
     const duration = Date.now() - start;
     console.info(`Database migration finished 🏁, duration: ${duration}ms`);
+  } catch (error) {
+    console.error(
+      `Database migration failed ❌, Error: ${(error as Error).message}`,
+    );
   } finally {
     await client.release();
     process.exit();

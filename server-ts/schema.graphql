@@ -13,6 +13,19 @@ type Store {
   updatedAt: String
 }
 
+enum ProductName {
+  PAN
+  COCOSETTE
+}
+
+type Product {
+  id: ID
+  name: ProductName!
+  brand: String!
+  createdAt: String
+  updatedAt: String
+}
+
 # Queries
 input CoordinatesInput {
   lat: Float
@@ -22,6 +35,7 @@ input CoordinatesInput {
 input StoresFromInput {
   distance: Int!
   coordinates: CoordinatesInput!
+  product: ProductName
 }
 
 type Query {
@@ -30,7 +44,6 @@ type Query {
 }
 
 # Mutations
-
 input StoreInput {
   coordinates: CoordinatesInput!
   address: String

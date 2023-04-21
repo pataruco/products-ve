@@ -4,6 +4,7 @@ import { Geometry } from 'wkx';
 
 import {
   MutationStoreArgs,
+  ProductName,
   Store,
   StoresFromInput,
 } from '../__generated__/resolvers-types';
@@ -89,6 +90,7 @@ interface GetStoresFromArgs {
   from: {
     distance: StoresFromInput['distance'];
     coordinates: StoresFromInput['coordinates'];
+    product: StoresFromInput['product'];
   };
 }
 
@@ -98,11 +100,14 @@ const getStoresFromSchema = Joi.object({
     lat: Joi.number().required(),
     lng: Joi.number().required(),
   },
+  product: Joi.string().valid(ProductName.Pan, ProductName.Cocosette),
 });
 
 export const getStoresFrom = async (
   _parent: unknown,
-  { from: { distance, coordinates } }: GetStoresFromArgs,
+  {
+    from: { distance, coordinates, product = ProductName.Pan },
+  }: GetStoresFromArgs,
 ) => {
   const { lat, lng } = coordinates;
 
@@ -124,14 +129,24 @@ export const getStoresFrom = async (
   }
 
   const { rows }: { rows: StoreRow[] } = await query(
-    `SELECT
-          *
-        FROM
-          stores
+    `SELECT DISTINCT ON (store_id)
+        stores.geog,
+        stores.name,
+        stores.address,
+        stores.created_at,
+        stores.updatedd_at
+      FROM
+        stores
+        JOIN stores_products ON stores_products.products_product_id = (
+          SELECT
+            products.product_id
+          FROM
+            products
+          WHERE
+            reference = '${product}')
+          JOIN products ON stores_products.stores_store_id = store_id
         WHERE
-          ST_DWithin (geog,
-            ST_GeographyFromText ('POINT(${lng} ${lat})'),
-            ${distance})`,
+          ST_DWithin (geog, ST_GeographyFromText ('POINT(${lng} ${lat})'), ${distance})`,
   );
 
   return rows.map(fromSqlToStore);
