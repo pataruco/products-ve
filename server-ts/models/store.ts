@@ -128,36 +128,25 @@ export const getStoresFrom = async (
     });
   }
 
-  // const { rows }: { rows: StoreRow[] } = await query(
-  //   `SELECT
-  //         *
-  //       FROM
-  //         stores
-  //       WHERE
-  //         ST_DWithin (geog,
-  //           ST_GeographyFromText ('POINT(${lng} ${lat})'),
-  //           ${distance})`,
-  // );
-
   const { rows }: { rows: StoreRow[] } = await query(
-    `SELECT
-        *
+    `SELECT DISTINCT ON (store_id)
+        stores.geog,
+        stores.name,
+        stores.address,
+        stores.created_at,
+        stores.updatedd_at
       FROM
         stores
-        JOIN products ON products.product_id = (
+        JOIN stores_products ON stores_products.products_product_id = (
           SELECT
             products.product_id
           FROM
             products
           WHERE
-            name = '${product}'
-        )
-      WHERE
-        ST_DWithin (
-          geog,
-          ST_GeographyFromText ('POINT(${lng} ${lat})'),
-          ${distance}
-        )`,
+            reference = '${product}')
+          JOIN products ON stores_products.stores_store_id = store_id
+        WHERE
+          ST_DWithin (geog, ST_GeographyFromText ('POINT(${lng} ${lat})'), ${distance})`,
   );
 
   return rows.map(fromSqlToStore);
