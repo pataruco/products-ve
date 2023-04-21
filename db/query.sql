@@ -31,3 +31,24 @@ WHERE
     -- Metres
     3000
   );
+
+SELECT
+  *
+FROM
+  stores -- Product
+  JOIN stores_products ON stores_products.products_product_id = (
+    SELECT
+      products.product_id
+    FROM
+      products
+    WHERE
+      reference = 'COCOSETTE'
+  )
+WHERE
+  ST_DWithin (
+    geog,
+    -- London
+    ST_GeographyFromText ('POINT(-0.1275 51.50722)'),
+    -- Metres
+    3000
+  );
