@@ -86,3 +86,11 @@ jobs:
       - name: run end to end tests
         run: pnpm jest
         working-directory: server-ts
+        env:
+          # The hostname used to communicate with the PostgreSQL service container
+          POSTGRES_HOST: postgres
+          # The default PostgreSQL port
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+          POSTGRES_PASSWORD: pataruco
+          POSTGRES_USER: pataruco
+          POSTGRES_DB: productsdb
