@@ -1,13 +1,10 @@
-import { createStore, getStoreById, getStoresFrom } from '../models/store';
+import { Resolvers } from '../__generated__/resolvers-types';
+import mutations from './mutations';
+import queries from './queries';
 
-const resolvers = {
-  Query: {
-    store: getStoreById,
-    stores: getStoresFrom,
-  },
-  Mutation: {
-    store: createStore,
-  },
+const resolvers: Resolvers = {
+  ...queries,
+  ...mutations,
 };
 
 export default resolvers;
