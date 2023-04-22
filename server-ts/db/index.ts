@@ -1,13 +1,15 @@
-import logger, { Service } from '../libs/logger';
 import type { PoolConfig, QueryConfig } from 'pg';
 import pg from 'pg';
+
+import { POSTGRES_HOST, POSTGRES_PASSWORD, POSTGRES_USER } from '../config';
+import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
 const poolConfig: PoolConfig = {
-  host: '127.0.0.1',
-  user: 'pataruco',
-  password: 'pataruco',
+  host: POSTGRES_HOST,
+  user: POSTGRES_USER,
+  password: POSTGRES_PASSWORD,
   database: 'productsdb',
   idleTimeoutMillis: 30000,
   max: 20,
