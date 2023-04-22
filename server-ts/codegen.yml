@@ -7,3 +7,4 @@ generates:
       useIndexSignature: true
     plugins:
       - typescript
+      - typescript-resolvers
