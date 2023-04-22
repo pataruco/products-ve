@@ -43,14 +43,14 @@ describe('Repository Template Functionality', () => {
           address: 'Walworth Rd London SE1 6SW',
         },
         {
-          name: 'La Chatica',
-          address:
-            'La Chatica Café 2 Elephant Rd London SE17 1LB United Kingdom',
-        },
-        {
           name: 'La Bodeguita',
           address:
             'La Bodeguita Elephant and Castle London SE1 6TE United Kingdom',
+        },
+        {
+          name: 'La Chatica',
+          address:
+            'La Chatica Café 2 Elephant Rd London SE17 1LB United Kingdom',
         },
       ],
     };
