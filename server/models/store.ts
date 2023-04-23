@@ -146,7 +146,10 @@ export const getStoresFrom = async (
             reference = '${product}')
           JOIN products ON stores_products.stores_store_id = store_id
         WHERE
-          ST_DWithin (geog, ST_GeographyFromText ('POINT(${lng} ${lat})'), ${distance})`,
+          ST_DWithin (geog, ST_GeographyFromText ('POINT(${lng} ${lat})'), ${distance})
+        ORDER BY
+          stores.store_id, stores.name ASC
+          `,
   );
 
   return rows.map(fromSqlToStore);

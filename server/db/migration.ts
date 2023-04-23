@@ -1,14 +1,13 @@
 import path from 'path';
 import { migrate } from 'postgres-migrations';
 
-import { getClient } from './index';
+import { pool } from './index';
 
 const migrationFolder = path.resolve('./db/migrations');
 
 const main = async () => {
-  const client = await getClient();
-
   const start = Date.now();
+  const client = await pool.connect();
   try {
     console.info('Database migration started 🟢');
     await migrate({ client }, migrationFolder);
