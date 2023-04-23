@@ -17,37 +17,6 @@ export const poolConfig: PoolConfig = {
 
 export const pool = new Pool(poolConfig);
 
-export const getClient = async () => {
-  try {
-    const client = await pool.connect();
-    const query = client.query;
-    const release = client.release;
-    // set a timeout of 5 seconds, after which we will log this client's last query
-    const timeout = setTimeout(() => {
-      logger.info({
-        message: 'A client has been checked out for more than 5 seconds!',
-        service: Service.DATABASE,
-      });
-    }, 5000);
-
-    client.release = () => {
-      // clear our timeout
-      clearTimeout(timeout);
-      // set the methods back to their old un-monkey-patched version
-      client.query = query;
-      client.release = release;
-      return release.apply(client);
-    };
-
-    return client;
-  } catch (error) {
-    const dbError = new Error(
-      `Database error: ${(error as unknown as Error).message}`,
-    );
-    throw dbError;
-  }
-};
-
 // rome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const query = async (text: string | QueryConfig<any>, params?: any) => {
   try {
