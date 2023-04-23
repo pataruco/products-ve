@@ -20,13 +20,6 @@ describe('Repository Template Functionality', () => {
       resolvers,
       nodeEnv: 'test',
     });
-  }, 20000);
-
-  afterAll(async () => {
-    setTimeout(async () => {
-      // await pool.end();
-      process.exit(0);
-    }, 2000);
   });
 
   it('Executes Location Entity Resolver', async () => {
@@ -82,5 +75,3 @@ describe('Repository Template Functionality', () => {
     // );
   });
 });
-
-// @ts-ignore

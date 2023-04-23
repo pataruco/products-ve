@@ -52,7 +52,6 @@ export const getClient = async () => {
 export const query = async (text: string | QueryConfig<any>, params?: any) => {
   try {
     const start = Date.now();
-    // const client = await getClient();
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
     logger.info({
