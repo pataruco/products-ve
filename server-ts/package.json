@@ -4,10 +4,11 @@
   "description": "",
   "scripts": {
     "codegen": "graphql-codegen && pnpm format ./__generated__/resolvers-types.ts --write",
-    "start": "pnpm codegen && pnpm ts-node ./index.ts",
     "format": "pnpm rome format *.ts",
     "lint": "pnpm rome check .",
     "migrate": "pnpm ts-node ./db/migration.ts",
+    "start": "pnpm codegen && pnpm ts-node ./index.ts",
+    "test:ci": "NODE_ENV=test pnpm jest --ci",
     "test": "NODE_ENV=test pnpm jest"
   },
   "scriptsComments": {

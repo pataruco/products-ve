@@ -6,7 +6,7 @@ import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
-export const poolConfig: PoolConfig = {
+const poolConfig: PoolConfig = {
   host: POSTGRES_HOST,
   user: POSTGRES_USER,
   password: POSTGRES_PASSWORD,

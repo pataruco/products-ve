@@ -83,7 +83,7 @@ jobs:
           POSTGRES_DB: productsdb
 
       - name: run end to end tests
-        run: pnpm test
+        run: pnpm test:ci
         working-directory: server-ts
         env:
           # The hostname used to communicate with the PostgreSQL service container
