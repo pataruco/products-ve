@@ -6,6 +6,7 @@ import resolvers from '../resolvers';
 import { Context } from '../types/context';
 import { pool, poolConfig, query } from '../db';
 import { inspect } from 'util';
+import logger from '../libs/logger';
 
 describe('Repository Template Functionality', () => {
   let server: ApolloServer<Context>;

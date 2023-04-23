@@ -1,7 +1,10 @@
 import { pool } from '../db';
+import logger from '../libs/logger';
 
-afterAll(() => {
-  setTimeout(async () => {
-    await pool.end();
-  }, 2000);
+beforeAll(() => {
+  logger.silent = true;
+});
+
+afterAll(async () => {
+  await pool.end();
 });
