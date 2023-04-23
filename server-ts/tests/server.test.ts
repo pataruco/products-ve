@@ -4,9 +4,6 @@ import gql from 'graphql-tag';
 
 import resolvers from '../resolvers';
 import { Context } from '../types/context';
-import { pool, poolConfig, query } from '../db';
-import { inspect } from 'util';
-import logger from '../libs/logger';
 
 describe('Repository Template Functionality', () => {
   let server: ApolloServer<Context>;
@@ -69,10 +66,5 @@ describe('Repository Template Functionality', () => {
     expect(res.body.kind).toEqual('single');
     // rome-ignore lint/suspicious/noExplicitAny: <explanation>
     expect((res.body as any).singleResult.errors).toBeUndefined();
-
-    // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-    // expect((res.body as any).singleResult.data.stores[0].name).toBe(
-    //   'Los Arrieros',
-    // );
   });
 });
