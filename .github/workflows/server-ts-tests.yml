@@ -25,7 +25,6 @@ jobs:
         image: postgis/postgis:15-3.3
         ports:
           - 5432/tcp
-
         # Provide the password for postgres
         env:
           POSTGRES_PASSWORD: pataruco
@@ -84,7 +83,7 @@ jobs:
           POSTGRES_DB: productsdb
 
       - name: run end to end tests
-        run: pnpm jest
+        run: pnpm test
         working-directory: server-ts
         env:
           # The hostname used to communicate with the PostgreSQL service container

@@ -5,7 +5,10 @@ import gql from 'graphql-tag';
 import resolvers from '../resolvers';
 import { Context } from '../types/context';
 
-describe('Repository Template Functionality', () => {
+const sortAlphaByName = (a: { name: string }, b: { name: string }) =>
+  a.name.localeCompare(b.name);
+
+describe('server', () => {
   let server: ApolloServer<Context>;
 
   beforeAll(async () => {
@@ -20,51 +23,105 @@ describe('Repository Template Functionality', () => {
     });
   });
 
-  it('Executes Location Entity Resolver', async () => {
-    //Arrange
-    const query = `query Stores($from: StoresFromInput!) {
-                      stores(from: $from) {
-                        name
-                      }
-                    }`;
+  describe('Query stores', () => {
+    it('Get stores by distance and product', async () => {
+      const query = `query Stores($from: StoresFromInput!) {
+                        stores(from: $from) {
+                          name
+                        }
+                      }`;
 
-    const variables = {
-      from: {
-        coordinates: {
-          lat: 51.50722,
-          lng: -0.1275,
+      const variables = {
+        from: {
+          coordinates: {
+            lat: 51.50722,
+            lng: -0.1275,
+          },
+          distance: 10000,
+          product: 'COCOSETTE',
         },
-        distance: 10000,
-        product: 'COCOSETTE',
-      },
-    };
+      };
 
-    const expected = {
-      stores: [
+      const expected = [
         {
           name: 'Los Arrieros',
-          address: 'Walworth Rd London SE1 6SW',
         },
         {
           name: 'La Bodeguita',
-          address:
-            'La Bodeguita Elephant and Castle London SE1 6TE United Kingdom',
         },
         {
           name: 'La Chatica',
-          address:
-            'La Chatica Café 2 Elephant Rd London SE17 1LB United Kingdom',
         },
-      ],
-    };
-    //Act
-    const res = await server.executeOperation({
-      query,
-      variables,
+      ].sort(sortAlphaByName);
+
+      const response = await server.executeOperation({
+        query,
+        variables,
+      });
+
+      const {
+        body: {
+          // @ts-ignore
+          singleResult: {
+            errors,
+            data: { stores },
+          },
+        },
+      } = response;
+
+      expect(errors).toBeUndefined();
+      expect(stores.sort(sortAlphaByName)).toEqual(expected);
     });
-    //Assert
-    expect(res.body.kind).toEqual('single');
-    // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-    expect((res.body as any).singleResult.errors).toBeUndefined();
+
+    it('Get stores by distances and product PAN when product is not given', async () => {
+      const query = `query Stores($from: StoresFromInput!) {
+                        stores(from: $from) {
+                          name
+                        }
+                      }`;
+
+      const variables = {
+        from: {
+          coordinates: {
+            lat: 51.50722,
+            lng: -0.1275,
+          },
+          distance: 5000,
+        },
+      };
+
+      const expected = [
+        {
+          name: 'Arepa & Co',
+        },
+        {
+          name: 'Los Arrieros',
+        },
+        {
+          name: 'La Bodeguita',
+        },
+        {
+          name: 'La Chatica',
+        },
+      ].sort(sortAlphaByName);
+
+      const response = await server.executeOperation({
+        query,
+        variables,
+      });
+
+      const {
+        body: {
+          // @ts-ignore
+          singleResult: {
+            errors,
+            data: { stores },
+          },
+        },
+      } = response;
+
+      expect(errors).toBeUndefined();
+      expect(stores.sort(sortAlphaByName)).toEqual(expected);
+    });
   });
 });
