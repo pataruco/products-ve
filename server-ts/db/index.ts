@@ -6,7 +6,7 @@ import logger, { Service } from '../libs/logger';
 
 const { Pool } = pg;
 
-const poolConfig: PoolConfig = {
+export const poolConfig: PoolConfig = {
   host: POSTGRES_HOST,
   user: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
@@ -15,7 +15,7 @@ const poolConfig: PoolConfig = {
   max: 20,
 };
 
-const pool = new Pool(poolConfig);
+export const pool = new Pool(poolConfig);
 
 export const getClient = async () => {
   try {
@@ -52,8 +52,8 @@ export const getClient = async () => {
 export const query = async (text: string | QueryConfig<any>, params?: any) => {
   try {
     const start = Date.now();
-    const client = await getClient();
-    const res = await client.query(text, params);
+    // const client = await getClient();
+    const res = await pool.query(text, params);
     const duration = Date.now() - start;
     logger.info({
       message: 'database-query',

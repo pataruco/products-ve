@@ -1,19 +1,32 @@
 import { ApolloServer } from '@apollo/server';
 import { readFileSync } from 'fs';
 import gql from 'graphql-tag';
-import { inspect } from 'util';
 
 import resolvers from '../resolvers';
-import { GraphQLResponseBody } from '@apollo/server/dist/esm/externalTypes/graphql';
+import { Context } from '../types/context';
+import { pool, poolConfig, query } from '../db';
+import { inspect } from 'util';
 
 describe('Repository Template Functionality', () => {
-  const server = new ApolloServer({
-    typeDefs: gql(
-      readFileSync('schema.graphql', {
-        encoding: 'utf-8',
-      }),
-    ),
-    resolvers,
+  let server: ApolloServer<Context>;
+
+  beforeAll(async () => {
+    server = new ApolloServer({
+      typeDefs: gql(
+        readFileSync('schema.graphql', {
+          encoding: 'utf-8',
+        }),
+      ),
+      resolvers,
+      nodeEnv: 'test',
+    });
+  }, 20000);
+
+  afterAll(async () => {
+    setTimeout(async () => {
+      // await pool.end();
+      process.exit(0);
+    }, 2000);
   });
 
   it('Executes Location Entity Resolver', async () => {
@@ -68,3 +81,5 @@ describe('Repository Template Functionality', () => {
     expect((res.body as any).singleResult.data).toEqual(expected);
   });
 });
+
+// @ts-ignore
