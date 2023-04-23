@@ -1,17 +1,17 @@
-name: server-ts tests
-run-name: ${{ github.actor }} is running e2e tests
+name: server tests
+run-name: ${{ github.actor }} is running tests
 
 on:
   pull_request:
     branches:
       - 'main'
     paths:
-      - server-ts/**
-      - .github/workflows/server-ts-tests.yml
+      - server/**
+      - .github/workflows/server-tests.yml
 
 jobs:
   # Label of the container job
-  container-job:
+  tests:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
     # Docker Hub image that `container-job` executes in
@@ -54,7 +54,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
-        working-directory: server-ts
+        working-directory: server
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
@@ -68,11 +68,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: server-ts
+        working-directory: server
 
       - name: run migrations
         run: pnpm migrate
-        working-directory: server-ts
+        working-directory: server
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: postgres
@@ -84,7 +84,7 @@ jobs:
 
       - name: run end to end tests
         run: pnpm test:ci
-        working-directory: server-ts
+        working-directory: server
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: postgres

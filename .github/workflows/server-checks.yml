@@ -1,12 +1,12 @@
-name: server-ts checks
+name: server checks
 run-name: ${{ github.actor }} is linting and runnings tests for server-ts
 on:
   pull_request:
     branches:
       - 'main'
     paths:
-      - server-ts/**
-      - .github/workflows/server-ts-checks.yaml
+      - server/**
+      - .github/workflows/server-checks.yaml
 jobs:
   lint-test:
     name: Lint and tests
@@ -30,7 +30,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
-        working-directory: server-ts
+        working-directory: server
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
@@ -44,19 +44,19 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: server-ts
+        working-directory: server
 
       - name: check GraphQL schema
-        working-directory: server-ts
+        working-directory: server
         run: |
           pnpm codegen
           git diff --exit-code
           exit $?
 
       - name: run format
-        working-directory: server-ts
+        working-directory: server
         run: pnpm format
 
       - name: run linter
-        working-directory: server-ts
+        working-directory: server
         run: pnpm lint
