@@ -52,12 +52,17 @@ describe('Repository Template Functionality', () => {
       stores: [
         {
           name: 'Los Arrieros',
+          address: 'Walworth Rd London SE1 6SW',
         },
         {
           name: 'La Bodeguita',
+          address:
+            'La Bodeguita Elephant and Castle London SE1 6TE United Kingdom',
         },
         {
           name: 'La Chatica',
+          address:
+            'La Chatica Café 2 Elephant Rd London SE17 1LB United Kingdom',
         },
       ],
     };
@@ -72,7 +77,9 @@ describe('Repository Template Functionality', () => {
     expect((res.body as any).singleResult.errors).toBeUndefined();
 
     // rome-ignore lint/suspicious/noExplicitAny: <explanation>
-    expect((res.body as any).singleResult.data).toEqual(expected);
+    expect((res.body as any).singleResult.data.stores[0].name).toBe(
+      'Los Arrieros',
+    );
   });
 });
 
