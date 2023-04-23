@@ -34,7 +34,6 @@ describe('Repository Template Functionality', () => {
     const query = `query Stores($from: StoresFromInput!) {
                       stores(from: $from) {
                         name
-                        address
                       }
                     }`;
 
@@ -53,17 +52,12 @@ describe('Repository Template Functionality', () => {
       stores: [
         {
           name: 'Los Arrieros',
-          address: 'Walworth Rd London SE1 6SW',
         },
         {
           name: 'La Bodeguita',
-          address:
-            'La Bodeguita Elephant and Castle London SE1 6TE United Kingdom',
         },
         {
           name: 'La Chatica',
-          address:
-            'La Chatica Café 2 Elephant Rd London SE17 1LB United Kingdom',
         },
       ],
     };
