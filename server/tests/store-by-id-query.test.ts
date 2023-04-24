@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import resolvers from '../resolvers';
 import { Context } from '../types/context';
 
-describe('Query store by id', async () => {
+describe('Query store by id', () => {
   let server: ApolloServer<Context>;
 
   beforeAll(async () => {
@@ -21,13 +21,14 @@ describe('Query store by id', async () => {
   });
 
   it('Return a GraphQLError when validation fail', async () => {
-    const query = `query Store($id: String!) {
-                      store(id: $String!) {
-                        name
-                      }
+    const query = `query Store($storeId: String!) {
+                    store(id: $storeId) {
+                      name
+                    }
                   }`;
+
     const variables = {
-      id: '123',
+      storeId: '123',
     };
 
     const response = await server.executeOperation({
@@ -42,6 +43,10 @@ describe('Query store by id', async () => {
       },
     } = response;
 
-    expect(data).toBeUndefined();
+    const [error] = errors;
+
+    expect(error.message).toBe('Failed to get store due to validation errors');
+    expect(error.extensions).toEqual({ code: 'VALIDATION_ERROR' });
+    expect(data).toEqual({ store: null });
   });
 });
