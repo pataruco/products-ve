@@ -47,16 +47,16 @@ jobs:
         working-directory: .
 
       - name: check GraphQL schema
-        working-directory: packages/server
+        working-directory: projects/server
         run: |
-          pnpm codegen
+          pnpm run codegen
           git diff --exit-code
           exit $?
 
       - name: run format
-        working-directory: packages/server
-        run: pnpm format
+        working-directory: projects/server
+        run: pnpm run format
 
       - name: run linter
-        working-directory: packages/server
-        run: pnpm lint
+        working-directory: projects/server
+        run: pnpm run lint
