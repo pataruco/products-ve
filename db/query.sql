@@ -17,7 +17,7 @@ SELECT
   stores.name,
   stores.address,
   stores.created_at,
-  stores.updatedd_at
+  stores.updated_at
 FROM
   stores -- Many to many by joint table
   JOIN stores_products ON stores_products.products_product_id = (

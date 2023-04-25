@@ -7,7 +7,7 @@ CREATE TABLE stores (
   name varchar(255) NOT NULL,
   address TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updatedd_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
   PRIMARY KEY (store_id)
 );
 

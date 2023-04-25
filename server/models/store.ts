@@ -16,7 +16,7 @@ interface StoreRow {
   name: string;
   address: string;
   created_at: string;
-  updatedd_at: string;
+  updated_at: string;
 }
 
 interface GeoJson {
@@ -29,7 +29,7 @@ const fromSqlToStore = ({
   name,
   address,
   created_at: createdAt,
-  updatedd_at: updatedAt,
+  updated_at: updatedAt,
 }: StoreRow) => {
   const { coordinates } = Geometry.parse(
     Buffer.from(geog, 'hex'),
@@ -134,7 +134,8 @@ export const getStoresFrom = async (
         stores.name,
         stores.address,
         stores.created_at,
-        stores.updatedd_at
+        stores.updated_at,
+        stores.store_id
       FROM
         stores
         JOIN stores_products ON stores_products.products_product_id = (
