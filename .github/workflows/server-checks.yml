@@ -30,7 +30,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
-        working-directory: server
+        working-directory: packages/server
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
@@ -44,19 +44,19 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: server
+        working-directory: packages/server
 
       - name: check GraphQL schema
-        working-directory: server
+        working-directory: packages/server
         run: |
           pnpm codegen
           git diff --exit-code
           exit $?
 
       - name: run format
-        working-directory: server
+        working-directory: packages/server
         run: pnpm format
 
       - name: run linter
-        working-directory: server
+        working-directory: packages/server
         run: pnpm lint

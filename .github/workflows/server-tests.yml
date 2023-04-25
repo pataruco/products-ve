@@ -54,7 +54,7 @@ jobs:
       - name: Get pnpm store directory
         id: pnpm-cache
         shell: bash
-        working-directory: server
+        working-directory: packages/server
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
@@ -68,11 +68,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: server
+        working-directory: packages/server
 
       - name: run migrations
         run: pnpm migrate
-        working-directory: server
+        working-directory: packages/server
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: postgres
@@ -84,7 +84,7 @@ jobs:
 
       - name: run end to end tests
         run: pnpm test:ci
-        working-directory: server
+        working-directory: packages/server
         env:
           # The hostname used to communicate with the PostgreSQL service container
           POSTGRES_HOST: postgres
