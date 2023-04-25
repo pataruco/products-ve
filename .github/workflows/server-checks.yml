@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: packages/server
+        working-directory: .
 
       - name: check GraphQL schema
         working-directory: packages/server

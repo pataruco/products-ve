@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: packages/server
+        working-directory: .
 
       - name: run migrations
         run: pnpm migrate
