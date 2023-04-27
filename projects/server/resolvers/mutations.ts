@@ -1,5 +1,5 @@
 import { MutationResolvers } from '../__generated__/resolvers-types';
-import { createStore } from '../models/store';
+import { createStore } from '../models/store/create-store';
 
 const mutations: MutationResolvers = {
   Mutation: {

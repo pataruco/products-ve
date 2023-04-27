@@ -4,7 +4,6 @@ import gql from 'graphql-tag';
 
 import resolvers from '../resolvers';
 import { Context } from '../types/context';
-import { inspect } from 'util';
 
 describe('Query store by id', () => {
   let server: ApolloServer<Context>;
