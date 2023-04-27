@@ -6,7 +6,7 @@ on:
     branches:
       - 'main'
     paths:
-      - server/**
+      - projects/server/**
       - .github/workflows/server-tests.yml
 
 jobs:
