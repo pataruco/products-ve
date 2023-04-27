@@ -9,7 +9,7 @@ on:
       - .github/workflows/server-checks.yaml
 jobs:
   lint-test:
-    name: Lint and tests
+    name: Lint 🔎, Format ✅, Validate GraphQL schema
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
