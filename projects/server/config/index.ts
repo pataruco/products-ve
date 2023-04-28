@@ -13,4 +13,4 @@ export const POSTGRES_DB = process.env.POSTGRES_DB || 'productsdb';
 export const FASTMAIL_API_TOKEN = process.env.FASTMAIL_API_TOKEN;
 export const FASTMAIL_API_USERNAME = process.env.FASTMAIL_API_USERNAME;
 export const JWT_SECRET =
-  process.env.FASTMAIL_API_USERNAME || 'ana-pedro-peter-miranda-martin-blanco';
+  process.env.JWT_SECRET || 'ana-pedro-peter-miranda-martin-blanco';

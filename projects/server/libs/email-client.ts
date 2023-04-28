@@ -141,5 +141,3 @@ export const sendEmailWithTokenTo = async (email: string) => {
 
   await draftResponse({ apiUrl, accountId, draftId, identityId, email });
 };
-
-sendEmailWithTokenTo('pataruco@gmail.com');
