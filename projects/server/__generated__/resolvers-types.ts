@@ -35,7 +35,12 @@ export type CoordinatesInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  sendAuthEmail?: Maybe<Scalars['Boolean']>;
   store?: Maybe<Store>;
+};
+
+export type MutationSendAuthEmailArgs = {
+  email: Scalars['String'];
 };
 
 export type MutationStoreArgs = {
@@ -248,6 +253,12 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation'],
 > = ResolversObject<{
+  sendAuthEmail?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSendAuthEmailArgs, 'email'>
+  >;
   store?: Resolver<
     Maybe<ResolversTypes['Store']>,
     ParentType,
