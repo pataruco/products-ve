@@ -1,11 +1,15 @@
-import { inspect } from 'util';
+import { FASTMAIL_API_TOKEN, FASTMAIL_API_USERNAME } from '../config';
+import logger, { Service } from './logger';
 
 // copy pasta from https://github.com/fastmail/JMAP-Samples/blob/main/javascript/hello-world.js
 
-import { FASTMAIL_API_TOKEN, FASTMAIL_API_USERNAME } from '../config';
-
-const token =
-  'fmu1-83294004-0ebe9827420d3720bda313eb160935a7-0-6ca4f2bb3dbe0f1624054e01e42dd200';
+interface EmailClient {
+  apiUrl: string;
+  accountId: string;
+  draftId: string;
+  identityId: string;
+  email: string;
+}
 
 const authUrl = 'https://api.fastmail.com/.well-known/jmap';
 const headers = {
@@ -21,7 +25,9 @@ const getSession = async () => {
   return response.json();
 };
 
-const mailboxQuery = async (apiUrl: string, accountId: string) => {
+type QueryInput = Pick<EmailClient, 'apiUrl' | 'accountId'>;
+
+const mailboxQuery = async ({ apiUrl, accountId }: QueryInput) => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
@@ -37,7 +43,7 @@ const mailboxQuery = async (apiUrl: string, accountId: string) => {
   return await data['methodResponses'][0][1].ids[0];
 };
 
-const identityQuery = async (apiUrl: string, accountId: string) => {
+const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
@@ -60,12 +66,13 @@ const identityQuery = async (apiUrl: string, accountId: string) => {
     .pop().id;
 };
 
-const draftResponse = async (
-  apiUrl: string,
-  accountId: string,
-  draftId: string,
-  identityId: string,
-) => {
+const draftResponse = async ({
+  apiUrl,
+  accountId,
+  draftId,
+  identityId,
+  email,
+}: EmailClient) => {
   const messageBody =
     'Hi! \n\n' +
     'This email may not look like much, but I sent it with JMAP, a protocol \n' +
@@ -77,7 +84,7 @@ const draftResponse = async (
 
   const draftObject = {
     from: [{ email: FASTMAIL_API_USERNAME }],
-    to: [{ email: FASTMAIL_API_USERNAME }],
+    to: [{ email }],
     subject: 'Hello, world!',
     keywords: { $draft: true },
     mailboxIds: { [draftId]: true },
@@ -85,46 +92,52 @@ const draftResponse = async (
     textBody: [{ partId: 'body', type: 'text/plain' }],
   };
 
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      using: [
-        'urn:ietf:params:jmap:core',
-        'urn:ietf:params:jmap:mail',
-        'urn:ietf:params:jmap:submission',
-      ],
-      methodCalls: [
-        ['Email/set', { accountId, create: { draft: draftObject } }, 'a'],
-        [
-          'EmailSubmission/set',
-          {
-            accountId,
-            onSuccessDestroyEmail: ['#sendIt'],
-            create: { sendIt: { emailId: '#draft', identityId } },
-          },
-          'b',
+  try {
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        using: [
+          'urn:ietf:params:jmap:core',
+          'urn:ietf:params:jmap:mail',
+          'urn:ietf:params:jmap:submission',
         ],
-      ],
-    }),
-  });
+        methodCalls: [
+          ['Email/set', { accountId, create: { draft: draftObject } }, 'a'],
+          [
+            'EmailSubmission/set',
+            {
+              accountId,
+              onSuccessDestroyEmail: ['#sendIt'],
+              create: { sendIt: { emailId: '#draft', identityId } },
+            },
+            'b',
+          ],
+        ],
+      }),
+    });
 
-  const data = await response.json();
-  console.log(JSON.stringify(data, null, 2));
+    if (response.ok) {
+      logger.info({
+        message: 'email with token sent',
+        service: Service.SERVER,
+      });
+      return;
+    }
+  } catch (error) {
+    throw error;
+  }
 };
 
-const main = async () => {
-  const session = await getSession();
-
-  const { apiUrl, primaryAccounts } = session;
+export const sendEmailWithTokenTo = async (email: string) => {
+  const { apiUrl, primaryAccounts } = await getSession();
 
   const accountId = primaryAccounts['urn:ietf:params:jmap:mail'];
 
-  const draftId = await mailboxQuery(apiUrl, accountId);
+  const [draftId, identityId] = await Promise.all([
+    mailboxQuery({ apiUrl, accountId }),
+    identityQuery({ apiUrl, accountId }),
+  ]);
 
-  const identityId = await identityQuery(apiUrl, accountId);
-
-  await draftResponse(apiUrl, accountId, draftId, identityId);
+  await draftResponse({ apiUrl, accountId, draftId, identityId, email });
 };
-
-main();
