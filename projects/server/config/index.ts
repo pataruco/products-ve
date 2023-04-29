@@ -14,3 +14,4 @@ export const FASTMAIL_API_TOKEN = process.env.FASTMAIL_API_TOKEN;
 export const FASTMAIL_API_USERNAME = process.env.FASTMAIL_API_USERNAME;
 export const JWT_SECRET =
   process.env.JWT_SECRET || 'ana-pedro-peter-miranda-martin-blanco';
+export const WEB_CLIENT_HOST = process.env.WEB_CLIENT_HOST || 'localhost:3000';

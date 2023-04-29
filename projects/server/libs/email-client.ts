@@ -1,4 +1,8 @@
-import { FASTMAIL_API_TOKEN, FASTMAIL_API_USERNAME } from '../config';
+import {
+  FASTMAIL_API_TOKEN,
+  FASTMAIL_API_USERNAME,
+  WEB_CLIENT_HOST,
+} from '../config';
 import logger, { Service } from './logger';
 
 // copy pasta from https://github.com/fastmail/JMAP-Samples/blob/main/javascript/hello-world.js
@@ -9,6 +13,7 @@ interface EmailClient {
   draftId: string;
   identityId: string;
   email: string;
+  token: string;
 }
 
 const authUrl = 'https://api.fastmail.com/.well-known/jmap';
@@ -66,12 +71,21 @@ const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
     .pop().id;
 };
 
+const getMessageBody = (token: string) => {
+  const queryParams = new URLSearchParams();
+  queryParams.append('token', token);
+
+  const url = new URL(`/?${queryParams}`, WEB_CLIENT_HOST);
+  `Puede hacer login en esta direccion: ${url}?`;
+};
+
 const draftResponse = async ({
-  apiUrl,
   accountId,
+  apiUrl,
   draftId,
-  identityId,
   email,
+  identityId,
+  token,
 }: EmailClient) => {
   const messageBody =
     'Hi! \n\n' +
@@ -129,7 +143,12 @@ const draftResponse = async ({
   }
 };
 
-export const sendEmailWithTokenTo = async (email: string) => {
+type SendEmailWithTokenToParams = Pick<EmailClient, 'email' | 'token'>;
+
+export const sendEmailWithTokenTo = async ({
+  email,
+  token,
+}: SendEmailWithTokenToParams) => {
   const { apiUrl, primaryAccounts } = await getSession();
 
   const accountId = primaryAccounts['urn:ietf:params:jmap:mail'];
@@ -139,5 +158,5 @@ export const sendEmailWithTokenTo = async (email: string) => {
     identityQuery({ apiUrl, accountId }),
   ]);
 
-  await draftResponse({ apiUrl, accountId, draftId, identityId, email });
+  await draftResponse({ apiUrl, accountId, draftId, identityId, email, token });
 };

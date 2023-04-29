@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 import Joi from 'joi';
 
-import { getTokenFromEmail } from '../../libs/auth';
+import { createAuthHash, createTokenFromEmail } from '../../libs/auth';
 
 const sendAuthEmailSchema = Joi.string().email().required();
 
@@ -19,6 +19,7 @@ export const sendAuthEmail = async (email: string) => {
 
   // TODO: send email with token
   try {
-    const token = await getTokenFromEmail(email);
+    const token = await createTokenFromEmail(email);
+    const authHash = createAuthHash({ email, token });
   } catch (error) {}
 };

@@ -5,7 +5,7 @@ import { JWT_SECRET } from '../config';
 
 export const secretKey = createSecretKey(JWT_SECRET, 'utf-8');
 
-export const getTokenFromEmail = async (email: string) => {
+export const createTokenFromEmail = async (email: string) => {
   const token = await new SignJWT({ email })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -26,3 +26,17 @@ export const verifyToken = async (token: string) => {
     return false;
   }
 };
+
+interface CreateAuthHashParams {
+  email: string;
+  token: string;
+}
+
+export const createAuthHash = ({ email, token }: CreateAuthHashParams) =>
+  Buffer.from(
+    JSON.stringify({
+      email,
+      token,
+    }),
+    'base64',
+  ).toString();
