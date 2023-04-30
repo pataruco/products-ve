@@ -38,5 +38,4 @@ export const createAuthHash = ({ email, token }: CreateAuthHashParams) =>
       email,
       token,
     }),
-    'base64',
-  ).toString();
+  ).toString('base64url');

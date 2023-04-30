@@ -145,7 +145,7 @@ const draftResponse = async ({
 
 type SendEmailWithTokenToParams = Pick<EmailClient, 'email' | 'token'>;
 
-export const sendEmailWithTokenTo = async ({
+export const sendEmailWithAuthHash = async ({
   email,
   token,
 }: SendEmailWithTokenToParams) => {
