@@ -2,10 +2,17 @@ import { GraphQLError } from 'graphql';
 import Joi from 'joi';
 
 import { createAuthHash, createTokenFromEmail } from '../../libs/auth';
+import { sendEmailWithAuthHash } from '../../libs/email-client';
+import { MutationSendAuthEmailArgs } from '../../__generated__/resolvers-types';
 
 const sendAuthEmailSchema = Joi.string().email().required();
 
-export const sendAuthEmail = async (email: string) => {
+export const sendAuthEmail = async (
+  _parent: unknown,
+  { email }: MutationSendAuthEmailArgs,
+) => {
+  console.log({ email });
+
   const { error } = sendAuthEmailSchema.validate(email);
 
   if (error) {
@@ -17,9 +24,17 @@ export const sendAuthEmail = async (email: string) => {
     });
   }
 
-  // TODO: send email with token
   try {
     const token = await createTokenFromEmail(email);
     const authHash = createAuthHash({ email, token });
-  } catch (error) {}
+    await sendEmailWithAuthHash({
+      email,
+      authHash,
+    });
+    return `Email sent to: ${email}`;
+  } catch (error) {
+    throw new GraphQLError('Failed to send email.', {
+      originalError: error as unknown as Error,
+    });
+  }
 };
