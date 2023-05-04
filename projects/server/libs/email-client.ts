@@ -80,11 +80,11 @@ const getMessageBody = ({
   const queryParams = new URLSearchParams();
   queryParams.append('authHash', authHash);
 
-  const url = new URL(`${WEB_CLIENT_HOST}/?${queryParams}`);
+  const url = new URL(`${WEB_CLIENT_HOST}/verify?${queryParams}`);
 
   return `
   Hola ${email}
-  Para iniciar sesión, haz clic en esta direccion: ${url}?
+  Para iniciar sesión, haz clic en esta direccion: ${url.toString()}?
   Saludos
 
   El Guacal
