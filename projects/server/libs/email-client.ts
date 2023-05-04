@@ -3,7 +3,6 @@ import {
   FASTMAIL_API_USERNAME,
   WEB_CLIENT_HOST,
 } from '../config';
-import { createAuthHash, createTokenFromEmail } from './auth';
 
 import logger, { Service } from './logger';
 

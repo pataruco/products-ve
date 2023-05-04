@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql';
 import Joi from 'joi';
 
+import { MutationSendAuthEmailArgs } from '../../__generated__/resolvers-types';
 import { createAuthHash, createTokenFromEmail } from '../../libs/auth';
 import { sendEmailWithAuthHash } from '../../libs/email-client';
-import { MutationSendAuthEmailArgs } from '../../__generated__/resolvers-types';
 
 const sendAuthEmailSchema = Joi.string().email().required();
 
