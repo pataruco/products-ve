@@ -23,7 +23,7 @@ const headers = {
   Authorization: `Bearer ${FASTMAIL_API_TOKEN}`,
 };
 
-const getSession = async () => {
+export const getSession = async () => {
   const response = await fetch(authUrl, {
     method: 'GET',
     headers,
