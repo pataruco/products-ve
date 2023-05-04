@@ -1,6 +1,11 @@
 import { jwtVerify } from 'jose-node-cjs-runtime';
 
-import { createTokenFromEmail, secretKey, verifyToken } from './auth';
+import {
+  createAuthHash,
+  createTokenFromEmail,
+  secretKey,
+  verifyToken,
+} from './auth';
 
 describe('Auth', () => {
   const email = 'luke@rebel-alliance.galaxy';
@@ -24,6 +29,30 @@ describe('Auth', () => {
       const token = await createTokenFromEmail(email);
       const isAValidToken = await verifyToken(token);
       expect(isAValidToken).toBeTruthy();
+    });
+  });
+
+  describe('createAuthHash', () => {
+    it('create auth hash containing email and token', async () => {
+      const token = await createTokenFromEmail(email);
+
+      const authHash = createAuthHash({ email, token });
+
+      expect(authHash).toBe(
+        Buffer.from(
+          JSON.stringify({
+            email,
+            token,
+          }),
+        ).toString('base64url'),
+      );
+
+      const hashObject = JSON.parse(
+        Buffer.from(authHash, 'base64').toString('utf8'),
+      );
+
+      expect(hashObject.token).toBe(token);
+      expect(hashObject.email).toBe(email);
     });
   });
 });

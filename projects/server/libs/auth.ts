@@ -17,9 +17,6 @@ export const createTokenFromEmail = async (email: string) => {
 
 export const verifyToken = async (token: string) => {
   try {
-    // verify token
-    // TODO: Something with the email
-    // const { payload } = await jwtVerify(token, secretKey);
     await jwtVerify(token, secretKey);
     return true;
   } catch {
