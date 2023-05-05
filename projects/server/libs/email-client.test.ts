@@ -1,5 +1,5 @@
 import { emailApiServer } from '../tests/mocks/email-api-server';
-import { getSession, mailboxQuery } from './email-client';
+import { getSession, identityQuery, mailboxQuery } from './email-client';
 
 describe('Email client', () => {
   // Establish API mocking before all tests.
@@ -38,6 +38,18 @@ describe('Email client', () => {
       const draftId = await mailboxQuery({ apiUrl, accountId });
 
       expect(draftId).toBe('draft-id');
+    });
+  });
+
+  describe('identityQuery', () => {
+    it('gets sender email id', async () => {
+      const { apiUrl, primaryAccounts } = await getSession();
+
+      const accountId = primaryAccounts['urn:ietf:params:jmap:mail'];
+
+      const id = await identityQuery({ apiUrl, accountId });
+
+      expect(id).toBe('order-66');
     });
   });
 });

@@ -3,7 +3,7 @@ import {
   FASTMAIL_API_USERNAME,
   WEB_CLIENT_HOST,
 } from '../config';
-import { inspect } from 'node:util';
+// import { inspect } from 'node:util';
 
 import logger, { Service } from './logger';
 
@@ -47,19 +47,10 @@ export const mailboxQuery = async ({ apiUrl, accountId }: QueryInput) => {
   });
   const data = await response.json();
 
-  // console.log(inspect(data, true, Infinity, true));
-
-  // console.log(data['methodResponses'][0][1].ids[0]);
-
   return await data['methodResponses'][0][1].ids[0];
 };
 
-// mailboxQuery({
-//   apiUrl: 'https://api.fastmail.com/jmap/api/',
-//   accountId: 'u83294004',
-// });
-
-const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
+export const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,

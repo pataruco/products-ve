@@ -26,30 +26,45 @@ export const handlers = [
     },
   ),
 
-  // Mailbox
-  rest.post(apiUrl, ({ headers }, res, ctx) => {
+  rest.post(apiUrl, ({ headers, body }, res, ctx) => {
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', `Bearer ${FASTMAIL_API_TOKEN}`);
 
-    return res(
-      ctx.status(200),
-      ctx.json({
-        methodResponses: [
-          [
-            'Mailbox/query',
-            {
-              filter: { name: 'Drafts' },
-              canCalculateChanges: true,
-              queryState: '17',
-              total: 1,
-              position: 0,
-              accountId: 'xxxx',
-              ids: ['draft-id'],
-            },
-            'a',
-          ],
-        ],
-      }),
-    );
+    // @ts-ignore
+    const method = body.methodCalls[0][0];
+
+    switch (method) {
+      // Mailbox
+      case 'Mailbox/query':
+        return res(
+          ctx.status(200),
+          ctx.json({
+            methodResponses: [
+              [
+                'Mailbox/query',
+                {
+                  ids: ['draft-id'],
+                },
+              ],
+            ],
+          }),
+        );
+      case 'Identity/get':
+        return res(
+          ctx.status(200),
+          ctx.json({
+            methodResponses: [
+              [
+                'Identity/get',
+                {
+                  list: [
+                    { email: 'darth.vader@empire.galaxy', id: 'order-66' },
+                  ],
+                },
+              ],
+            ],
+          }),
+        );
+    }
   }),
 ];
