@@ -1,5 +1,11 @@
 import { emailApiServer } from '../tests/mocks/email-api-server';
-import { getSession, identityQuery, mailboxQuery } from './email-client';
+import { createAuthHash, createTokenFromEmail } from './auth';
+import {
+  getMessageBody,
+  getSession,
+  identityQuery,
+  mailboxQuery,
+} from './email-client';
 
 describe('Email client', () => {
   // Establish API mocking before all tests.
@@ -50,6 +56,19 @@ describe('Email client', () => {
       const id = await identityQuery({ apiUrl, accountId });
 
       expect(id).toBe('order-66');
+    });
+  });
+
+  describe('getMessageBody', () => {
+    it('returns email body as string', async () => {
+      const email = 'test@example.com';
+      const token = await createTokenFromEmail(email);
+      const authHash = createAuthHash({ email, token });
+
+      const messageBody = getMessageBody({ authHash, email });
+
+      expect(messageBody).toContain(email);
+      expect(messageBody).toContain(authHash);
     });
   });
 });

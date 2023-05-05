@@ -73,7 +73,7 @@ export const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
     .pop().id;
 };
 
-const getMessageBody = ({
+export const getMessageBody = ({
   authHash,
   email,
 }: Pick<EmailClient, 'authHash' | 'email'>) => {
