@@ -65,6 +65,9 @@ export const handlers = [
             ],
           }),
         );
+
+      case 'Email/set':
+        return res(ctx.status(200));
     }
   }),
 ];

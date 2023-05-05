@@ -113,7 +113,7 @@ const composeDraft = ({
   textBody: [{ partId: 'body', type: 'text/plain' }],
 });
 
-const draftResponse = async ({
+export const draftResponse = async ({
   accountId,
   apiUrl,
   draftId,
