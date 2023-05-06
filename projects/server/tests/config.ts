@@ -8,5 +8,6 @@ beforeAll(() => {
 
 afterAll(async () => {
   // disconnect server from database
+  logger.silent = false;
   await pool.end();
 });

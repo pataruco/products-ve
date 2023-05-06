@@ -11,8 +11,6 @@ export const sendAuthEmail = async (
   _parent: unknown,
   { email }: MutationSendAuthEmailArgs,
 ) => {
-  console.log({ email });
-
   const { error } = sendAuthEmailSchema.validate(email);
 
   if (error) {
