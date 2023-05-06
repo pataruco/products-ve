@@ -1,7 +1,12 @@
-import { FASTMAIL_API_TOKEN, FASTMAIL_API_USERNAME } from '../config';
+import {
+  FASTMAIL_API_TOKEN,
+  FASTMAIL_API_USERNAME,
+  WEB_CLIENT_HOST,
+} from '../config';
+
 import logger, { Service } from './logger';
 
-// copy pasta from https://github.com/fastmail/JMAP-Samples/blob/main/javascript/hello-world.js
+// from https://github.com/fastmail/JMAP-Samples/blob/main/javascript/hello-world.js
 
 interface EmailClient {
   apiUrl: string;
@@ -9,6 +14,7 @@ interface EmailClient {
   draftId: string;
   identityId: string;
   email: string;
+  authHash: string;
 }
 
 const authUrl = 'https://api.fastmail.com/.well-known/jmap';
@@ -17,7 +23,7 @@ const headers = {
   Authorization: `Bearer ${FASTMAIL_API_TOKEN}`,
 };
 
-const getSession = async () => {
+export const getSession = async () => {
   const response = await fetch(authUrl, {
     method: 'GET',
     headers,
@@ -27,7 +33,7 @@ const getSession = async () => {
 
 type QueryInput = Pick<EmailClient, 'apiUrl' | 'accountId'>;
 
-const mailboxQuery = async ({ apiUrl, accountId }: QueryInput) => {
+export const mailboxQuery = async ({ apiUrl, accountId }: QueryInput) => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
@@ -43,7 +49,7 @@ const mailboxQuery = async ({ apiUrl, accountId }: QueryInput) => {
   return await data['methodResponses'][0][1].ids[0];
 };
 
-const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
+export const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
@@ -66,31 +72,60 @@ const identityQuery = async ({ apiUrl, accountId }: QueryInput) => {
     .pop().id;
 };
 
-const draftResponse = async ({
-  apiUrl,
-  accountId,
-  draftId,
-  identityId,
+export const getMessageBody = ({
+  authHash,
   email,
-}: EmailClient) => {
-  const messageBody =
-    'Hi! \n\n' +
-    'This email may not look like much, but I sent it with JMAP, a protocol \n' +
-    'designed to make it easier to manage email, contacts, calendars, and more of \n' +
-    'your digital life in general. \n\n' +
-    'Pretty cool, right? \n\n' +
-    '-- \n' +
-    'This email sent from my next-generation email system at Fastmail. \n';
+}: Pick<EmailClient, 'authHash' | 'email'>) => {
+  const queryParams = new URLSearchParams();
+  queryParams.append('authHash', authHash);
 
-  const draftObject = {
-    from: [{ email: FASTMAIL_API_USERNAME }],
-    to: [{ email }],
-    subject: 'Hello, world!',
-    keywords: { $draft: true },
-    mailboxIds: { [draftId]: true },
-    bodyValues: { body: { value: messageBody, charset: 'utf-8' } },
-    textBody: [{ partId: 'body', type: 'text/plain' }],
-  };
+  const url = new URL(`${WEB_CLIENT_HOST}/verify?${queryParams}`);
+
+  return `
+  Hola ${email}
+  Para iniciar sesión, haz clic en esta direccion: ${url.toString()}?
+  Saludos
+
+  El Guacal
+  `;
+};
+
+interface ComposeDraftParams {
+  from?: string;
+  to: string;
+  draftId: string;
+  messageBody: string;
+}
+
+const composeDraft = ({
+  from,
+  to,
+  draftId,
+  messageBody,
+}: ComposeDraftParams) => ({
+  from: [{ email: from }],
+  to: [{ email: to }],
+  subject: 'El Guacal: Inicio de sesión',
+  keywords: { $draft: true },
+  mailboxIds: { [draftId]: true },
+  bodyValues: { body: { value: messageBody, charset: 'utf-8' } },
+  textBody: [{ partId: 'body', type: 'text/plain' }],
+});
+
+export const draftResponse = async ({
+  accountId,
+  apiUrl,
+  draftId,
+  email,
+  identityId,
+  authHash,
+}: EmailClient) => {
+  const draftObject = composeDraft({
+    from: FASTMAIL_API_USERNAME,
+    to: email,
+    draftId,
+    messageBody: getMessageBody({ email, authHash }),
+  });
 
   try {
     const response = await fetch(apiUrl, {
@@ -119,7 +154,7 @@ const draftResponse = async ({
 
     if (response.ok) {
       logger.info({
-        message: 'email with token sent',
+        message: 'email with token auth hash',
         service: Service.SERVER,
       });
       return;
@@ -129,7 +164,12 @@ const draftResponse = async ({
   }
 };
 
-export const sendEmailWithTokenTo = async (email: string) => {
+type SendEmailWithTokenToParams = Pick<EmailClient, 'email' | 'authHash'>;
+
+export const sendEmailWithAuthHash = async ({
+  email,
+  authHash,
+}: SendEmailWithTokenToParams) => {
   const { apiUrl, primaryAccounts } = await getSession();
 
   const accountId = primaryAccounts['urn:ietf:params:jmap:mail'];
@@ -139,5 +179,12 @@ export const sendEmailWithTokenTo = async (email: string) => {
     identityQuery({ apiUrl, accountId }),
   ]);
 
-  await draftResponse({ apiUrl, accountId, draftId, identityId, email });
+  await draftResponse({
+    apiUrl,
+    accountId,
+    draftId,
+    identityId,
+    email,
+    authHash,
+  });
 };
