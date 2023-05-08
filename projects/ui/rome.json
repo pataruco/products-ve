@@ -5,7 +5,7 @@
   },
   "linter": {
     "enabled": true,
-    "ignore": ["dist/**", "public/**"],
+    "ignore": ["dist/**", "public/**", "__generated__/**"],
     "rules": {
       "recommended": true
     }
