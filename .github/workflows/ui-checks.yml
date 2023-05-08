@@ -46,12 +46,12 @@ jobs:
         run: pnpm install
         working-directory: .
 
-      # - name: check GraphQL schema
-      #   working-directory: projects/server
-      #   run: |
-      #     pnpm run codegen
-      #     git diff --exit-code
-      #     exit $?
+      - name: check types from GraphQL schema
+        working-directory: projects/ui
+        run: |
+          pnpm run codegen
+          git diff --exit-code
+          exit $?
 
       - name: run format
         working-directory: projects/ui

@@ -46,7 +46,7 @@ jobs:
         run: pnpm install
         working-directory: .
 
-      - name: check GraphQL schema
+      - name: check types from GraphQL schema
         working-directory: projects/server
         run: |
           pnpm run codegen
