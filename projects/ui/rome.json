@@ -5,7 +5,7 @@
   },
   "linter": {
     "enabled": true,
-    "ignore": ["dist/**", "public/**"],
+    "ignore": ["dist/**", "public/**", "**/*.generated.ts"],
     "rules": {
       "recommended": true
     }
@@ -16,7 +16,7 @@
     "indentStyle": "space",
     "indentSize": 2,
     "lineWidth": 80,
-    "ignore": ["tsconfig.json", "tsconfig.node.json"]
+    "ignore": ["tsconfig.json", "tsconfig.node.json", "**/*.generated.ts"]
   },
   "javascript": {
     "formatter": {
