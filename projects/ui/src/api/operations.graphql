@@ -1,0 +1,11 @@
+query Stores($from: StoresFromInput!) {
+  stores(from: $from) {
+    id
+    name
+    address
+    coordinates {
+      lat
+      lng
+    }
+  }
+}
