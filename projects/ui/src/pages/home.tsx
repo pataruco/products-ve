@@ -1,14 +1,20 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 
 import { useStoresQuery } from '../api/operations.generated';
+import { CustomMarker } from '../components/custom-marker';
+
+const londonCoordinates = {
+  lat: 51.50722,
+  lng: -0.1275,
+};
 
 const Home = () => {
   const { data, error, loading } = useStoresQuery({
     variables: {
       from: {
         coordinates: {
-          lat: 51.50722,
-          lng: -0.1275,
+          lat: londonCoordinates.lat,
+          lng: londonCoordinates.lng,
         },
         distance: 10000,
       },
@@ -19,23 +25,19 @@ const Home = () => {
 
   if (error) return <p>Error : {error.message}</p>;
 
-  const markers = data?.stores?.map(
-    ({ id, coordinates: { lat, lng }, name, address }) => {
-      return (
-        <Marker position={[lat, lng]} key={id}>
-          <Popup>
-            <p>{name}</p>
-            <address>{address}</address>
-          </Popup>
-        </Marker>
-      );
-    },
-  );
+  const markers = data?.stores?.map(({ id, coordinates, name, address }) => (
+    <CustomMarker
+      id={id}
+      coordinates={coordinates}
+      name={name}
+      address={address}
+    />
+  ));
 
   return (
     <MapContainer
       // @ts-ignore bad TS import on react-leaflet
-      center={[51.50722, -0.1275]}
+      center={[londonCoordinates.lat, londonCoordinates.lng]}
       zoom={13}
       scrollWheelZoom={false}
     >
@@ -45,16 +47,7 @@ const Home = () => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {data?.stores?.map(({ id, coordinates: { lat, lng }, name, address }) => {
-        return (
-          <Marker position={[lat, lng]} key={id}>
-            <Popup>
-              <p>{name}</p>
-              <address>{address}</address>
-            </Popup>
-          </Marker>
-        );
-      })}
+      {markers ? [...markers] : null}
     </MapContainer>
   );
 };
