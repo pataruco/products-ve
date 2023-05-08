@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import './styles/index.css';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import Home from './pages/home';
+import './styles/index.css';
 
 const router = createBrowserRouter([
   {

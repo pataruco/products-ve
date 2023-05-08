@@ -1,15 +1,15 @@
-name: server checks
-run-name: ${{ github.actor }} is linting and runnings tests for server
+name: UI checks
+run-name: ${{ github.actor }} is linting and runnings tests for UI
 on:
   pull_request:
     branches:
       - 'main'
     paths:
-      - projects/server/**
-      - .github/workflows/server-checks.yaml
+      - projects/ui/**
+      - .github/workflows/ui-checks.yaml
 jobs:
-  lint-test:
-    name: Lint 🔎, Format ✅, Validate GraphQL schema
+  lint-format:
+    name: Lint 🔎, Format ✅
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
@@ -46,17 +46,17 @@ jobs:
         run: pnpm install
         working-directory: .
 
-      - name: check GraphQL schema
-        working-directory: projects/server
-        run: |
-          pnpm run codegen
-          git diff --exit-code
-          exit $?
+      # - name: check GraphQL schema
+      #   working-directory: projects/server
+      #   run: |
+      #     pnpm run codegen
+      #     git diff --exit-code
+      #     exit $?
 
       - name: run format
-        working-directory: projects/server
+        working-directory: projects/ui
         run: pnpm run format
 
       - name: run linter
-        working-directory: projects/server
+        working-directory: projects/ui
         run: pnpm run lint
