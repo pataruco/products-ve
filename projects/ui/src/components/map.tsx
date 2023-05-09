@@ -30,6 +30,7 @@ const MapComponent = () => {
       const { id, coordinates, name, address } = store;
       return (
         <CustomMarker
+          key={id}
           id={id}
           coordinates={coordinates}
           name={name}
