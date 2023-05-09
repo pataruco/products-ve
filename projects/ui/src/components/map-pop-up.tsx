@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { useStoreQuery } from '../api/operations.generated';
@@ -12,10 +12,35 @@ const StyledMapPopUp = styled.div`
   z-index: 1000;
   border-top-right-radius: 2rem;
   border-top-left-radius: 2rem;
+
+  button {
+    appearance: none;
+    color: black;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid currentColor;
+
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    inset: var(--base-padding) var(--base-padding) auto auto;
+
+    &:hover,
+    &:focus {
+      color: gray;
+      border-bottom: 2px solid currentColor;
+    }
+
+    &:active {
+      color: red;
+      border-bottom: 2px solid currentColor;
+    }
+  }
 `;
 
 const MapPopUp = () => {
   const { storeId } = useRecoilValue(markerPopUpAtom);
+  const resetPopUp = useResetRecoilState(markerPopUpAtom);
 
   const { data, error, loading } = useStoreQuery({
     variables: {
@@ -48,6 +73,8 @@ const MapPopUp = () => {
               Directions
             </a>
           </p>
+
+          <button onClick={resetPopUp}>close</button>
         </StyledMapPopUp>
       );
     }
