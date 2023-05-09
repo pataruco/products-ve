@@ -1,9 +1,9 @@
 import React from 'react';
 import { Marker } from 'react-leaflet';
 import { useRecoilState } from 'recoil';
-import markerPopUpAtom from '../recoil/marker-popup';
 
 import type { Store } from '../api/types.generated';
+import markerPopUpAtom from '../recoil/marker-popup';
 
 type CustomMarkerProps = Pick<Store, 'id' | 'coordinates'>;
 
