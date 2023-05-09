@@ -13,6 +13,7 @@ const StyledPageLayout = styled.div`
     flex: 1 auto;
     display: flex;
     flex-direction: column;
+    position: relative;
 
     & > * {
       flex: 1 auto;

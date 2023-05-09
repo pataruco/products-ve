@@ -45,9 +45,57 @@ export function useStoresLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Sto
 export type StoresQueryHookResult = ReturnType<typeof useStoresQuery>;
 export type StoresLazyQueryHookResult = ReturnType<typeof useStoresLazyQuery>;
 export type StoresQueryResult = Apollo.QueryResult<StoresQuery, StoresQueryVariables>;
+export const StoreDocument = gql`
+    query Store($storeId: String!) {
+  store(id: $storeId) {
+    name
+    id
+    address
+    coordinates {
+      lat
+      lng
+    }
+  }
+}
+    `;
+
+/**
+ * __useStoreQuery__
+ *
+ * To run a query within a React component, call `useStoreQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStoreQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStoreQuery({
+ *   variables: {
+ *      storeId: // value for 'storeId'
+ *   },
+ * });
+ */
+export function useStoreQuery(baseOptions: Apollo.QueryHookOptions<StoreQuery, StoreQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StoreQuery, StoreQueryVariables>(StoreDocument, options);
+      }
+export function useStoreLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StoreQuery, StoreQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StoreQuery, StoreQueryVariables>(StoreDocument, options);
+        }
+export type StoreQueryHookResult = ReturnType<typeof useStoreQuery>;
+export type StoreLazyQueryHookResult = ReturnType<typeof useStoreLazyQuery>;
+export type StoreQueryResult = Apollo.QueryResult<StoreQuery, StoreQueryVariables>;
 export type StoresQueryVariables = Types.Exact<{
   from: Types.StoresFromInput;
 }>;
 
 
 export type StoresQuery = { __typename?: 'Query', stores?: Array<{ __typename?: 'Store', id?: string | null, name?: string | null, address?: string | null, coordinates?: { __typename?: 'Coordinates', lat?: number | null, lng?: number | null } | null } | null> | null };
+
+export type StoreQueryVariables = Types.Exact<{
+  storeId: Types.Scalars['String'];
+}>;
+
+
+export type StoreQuery = { __typename?: 'Query', store?: { __typename?: 'Store', name?: string | null, id?: string | null, address?: string | null, coordinates?: { __typename?: 'Coordinates', lat?: number | null, lng?: number | null } | null } | null };

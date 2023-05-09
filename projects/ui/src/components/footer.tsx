@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const StyledFooter = styled.footer`
   padding: var(--base-padding);
+  background-color: #f4f4f4;
 
   ul {
     margin: 0;

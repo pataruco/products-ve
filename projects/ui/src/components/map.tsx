@@ -27,15 +27,8 @@ const MapComponent = () => {
 
   const markers = data?.stores?.map((store) => {
     if (store) {
-      const { id, coordinates, name, address } = store;
-      return (
-        <CustomMarker
-          id={id}
-          coordinates={coordinates}
-          name={name}
-          address={address}
-        />
-      );
+      const { id, coordinates } = store;
+      return <CustomMarker key={id} id={id} coordinates={coordinates} />;
     }
   });
 
@@ -49,7 +42,6 @@ const MapComponent = () => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-
       {markers ? [...markers] : null}
     </MapContainer>
   );
