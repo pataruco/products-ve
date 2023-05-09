@@ -16,7 +16,7 @@ export const CustomMarker: React.FC<CustomMarkerProps> = ({
 
   const handleOnClick = () => {
     if (id) {
-      setMarkerPopUp(id);
+      setMarkerPopUp({ storeId: id, isOpen: true });
     }
   };
 
@@ -26,7 +26,6 @@ export const CustomMarker: React.FC<CustomMarkerProps> = ({
       return (
         <Marker
           position={[lat, lng]}
-          key={id}
           eventHandlers={{ click: handleOnClick }}
         />
       );

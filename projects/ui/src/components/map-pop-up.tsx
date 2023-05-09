@@ -15,7 +15,7 @@ const StyledMapPopUp = styled.div`
 `;
 
 const MapPopUp = () => {
-  const storeId = useRecoilValue(markerPopUpAtom);
+  const { storeId } = useRecoilValue(markerPopUpAtom);
 
   const { data, error, loading } = useStoreQuery({
     variables: {
