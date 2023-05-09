@@ -10,6 +10,7 @@ const config: CodegenConfig = {
       plugins: ['typescript'],
       presetConfig: {
         typesPath: 'types.generated.ts',
+        avoidOptionals: true,
       },
     },
     './src/api/': {
