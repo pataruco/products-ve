@@ -5,12 +5,12 @@ import markerPopUpAtom from '../recoil/marker-popup';
 
 import type { Store } from '../api/types.generated';
 
+type CustomMarkerProps = Pick<Store, 'id' | 'coordinates'>;
+
 // @ts-ignore
-export const CustomMarker: React.FC<Store> = ({
+export const CustomMarker: React.FC<CustomMarkerProps> = ({
   id,
   coordinates,
-  name,
-  address,
 }) => {
   const [_, setMarkerPopUp] = useRecoilState(markerPopUpAtom);
 

@@ -27,16 +27,8 @@ const MapComponent = () => {
 
   const markers = data?.stores?.map((store) => {
     if (store) {
-      const { id, coordinates, name, address } = store;
-      return (
-        <CustomMarker
-          key={id}
-          id={id}
-          coordinates={coordinates}
-          name={name}
-          address={address}
-        />
-      );
+      const { id, coordinates } = store;
+      return <CustomMarker key={id} id={id} coordinates={coordinates} />;
     }
   });
 
