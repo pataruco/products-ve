@@ -1,5 +1,7 @@
 import React from 'react';
-import { Marker, Popup } from 'react-leaflet';
+import { Marker } from 'react-leaflet';
+import { useRecoilState } from 'recoil';
+import markerPopUpAtom from '../recoil/marker-popup';
 
 import type { Store } from '../api/types.generated';
 
@@ -10,16 +12,23 @@ export const CustomMarker: React.FC<Store> = ({
   name,
   address,
 }) => {
+  const [_, setMarkerPopUp] = useRecoilState(markerPopUpAtom);
+
+  const handleOnClick = () => {
+    if (id) {
+      setMarkerPopUp(id);
+    }
+  };
+
   if (coordinates) {
     const { lat, lng } = coordinates;
     if (lat && lng) {
       return (
-        <Marker position={[lat, lng]} key={id}>
-          <Popup>
-            <p>{name}</p>
-            <address>{address}</address>
-          </Popup>
-        </Marker>
+        <Marker
+          position={[lat, lng]}
+          key={id}
+          eventHandlers={{ click: handleOnClick }}
+        />
       );
     }
   }
