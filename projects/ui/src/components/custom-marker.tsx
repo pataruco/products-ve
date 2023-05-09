@@ -12,7 +12,6 @@ export const CustomMarker: React.FC<Store> = ({
 }) => {
   if (coordinates) {
     const { lat, lng } = coordinates;
-
     if (lat && lng) {
       return (
         <Marker position={[lat, lng]} key={id}>

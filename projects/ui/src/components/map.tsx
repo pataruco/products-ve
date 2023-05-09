@@ -25,14 +25,19 @@ const MapComponent = () => {
 
   if (error) return <p>Error : {error.message}</p>;
 
-  const markers = data?.stores?.map(({ id, coordinates, name, address }) => (
-    <CustomMarker
-      id={id}
-      coordinates={coordinates}
-      name={name}
-      address={address}
-    />
-  ));
+  const markers = data?.stores?.map((store) => {
+    if (store) {
+      const { id, coordinates, name, address } = store;
+      return (
+        <CustomMarker
+          id={id}
+          coordinates={coordinates}
+          name={name}
+          address={address}
+        />
+      );
+    }
+  });
 
   return (
     <MapContainer
