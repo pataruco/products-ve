@@ -1,2 +1,4 @@
 @import url(./normalize.css);
+/* TODO: import leaflet in a better way */
+@import url(../../node_modules/leaflet/dist/leaflet.css);
 @import url(./main.css);
