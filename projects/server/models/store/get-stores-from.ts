@@ -28,10 +28,13 @@ const getStoresFromSchema = Joi.object({
 export const getStoresFrom = async (
   _parent: unknown,
   {
-    from: { distance, coordinates, product = ProductName.Pan },
-  }: GetStoresFromArgs,
+    from: { distance, coordinates, product },
+  }: // from: { distance, coordinates, product = ProductName.Pan },
+  GetStoresFromArgs,
 ) => {
   const { lat, lng } = coordinates;
+
+  console.log({ product });
 
   const { error } = getStoresFromSchema.validate({
     distance,
@@ -48,6 +51,23 @@ export const getStoresFrom = async (
         code: 'VALIDATION_ERROR',
       },
     });
+  }
+
+  if (!product) {
+    const { rows }: { rows: StoreRow[] } = await query(
+      `SELECT
+        *
+      FROM
+        stores
+      WHERE
+        ST_DWithin(
+          geog,
+          ST_GeographyFromText('POINT(${lng} ${lat})'),
+          ${distance}
+        )`,
+    );
+
+    return rows.map(fromSqlToStore);
   }
 
   const { rows }: { rows: StoreRow[] } = await query(
