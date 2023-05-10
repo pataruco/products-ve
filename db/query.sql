@@ -37,3 +37,34 @@ WHERE
     -- METRES
     10000
   );
+
+-- Get stores with products as JSON array
+SELECT
+  stores.store_id,
+  stores.name,
+  stores.address,
+  stores.geog,
+  stores.created_at,
+  stores.updated_at,
+  ARRAY_AGG(
+    JSON_BUILD_OBJECT(
+      'name',
+      products.name,
+      'id',
+      products.product_id,
+      'brand',
+      products.brand,
+      'createdAt',
+      products.created_at,
+      'updatedAt',
+      products.updated
+    )
+  ) products
+FROM
+  stores
+  JOIN stores_products ON stores_products.stores_store_id = '<STORE_ID>'
+  JOIN products ON stores_products.stores_store_id = '<STORE_ID>'
+WHERE
+  stores.store_id = '<STORE_ID>'
+GROUP BY
+  stores.store_id;
