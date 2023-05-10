@@ -33,7 +33,22 @@ export const getStoreById = async (
   }
 
   const { rows }: { rows: StoreRow[] } = await query(
-    `SELECT * from stores WHERE store_id = '${id}'`,
+    `SELECT
+      stores.store_id,
+      stores.name,
+      stores.address,
+      stores.geog,
+      stores.created_at,
+      stores.updated_at,
+      ARRAY_AGG(JSON_BUILD_OBJECT('name', products.reference, 'id', products.product_id, 'brand', products.brand, 'createdAt', products.created_at, 'updatedAt', products.updated)) products
+    FROM
+      stores
+      JOIN stores_products ON stores_products.stores_store_id = '${id}'
+      JOIN products ON stores_products.stores_store_id = '${id}'
+    WHERE
+      stores.store_id = '${id}'
+    GROUP BY
+      stores.store_id;`,
   );
 
   return fromSqlToStore(rows[0]);
