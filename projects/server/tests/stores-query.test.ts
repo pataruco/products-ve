@@ -133,22 +133,94 @@ describe('Query stores', () => {
     const variables = {
       from: {
         coordinates,
-        distance: 5000,
+        distance: 10000,
       },
     };
 
     const expected = [
       {
+        name: 'Brixton Market',
+      },
+      {
+        name: 'Piccolo Bar',
+      },
+      {
+        name: 'El Rincon Quiteno',
+      },
+      {
         name: 'Arepa & Co',
+      },
+      {
+        name: 'Jeans Deli/Cafe',
+      },
+      {
+        name: 'Sun Food',
+      },
+      {
+        name: 'Casa de Carnes',
+      },
+      {
+        name: 'Rye Lane',
+      },
+      {
+        name: 'Afro Caribbean Asian Store',
+      },
+      {
+        name: 'La Chatica',
+      },
+      {
+        name: 'Latin Stop',
+      },
+      {
+        name: 'Tesco Tottenham',
+      },
+      {
+        name: 'Fulham',
+      },
+      {
+        name: 'Tesco Extra Streatham',
+      },
+      {
+        name: 'Tropical Mini Market',
       },
       {
         name: 'Los Arrieros',
       },
       {
+        name: 'M.k. Super Market',
+      },
+      {
+        name: 'K M Butchers',
+      },
+      {
+        name: 'Supermecardo Portugal',
+      },
+      {
         name: 'La Bodeguita',
       },
       {
-        name: 'La Chatica',
+        name: 'Tesco',
+      },
+      {
+        name: 'Tahir Halal Meat',
+      },
+      {
+        name: 'Seven Sisters Greengrocers',
+      },
+      {
+        name: 'Tesco Lewisham Superstore',
+      },
+      {
+        name: 'R Garcia and Sons',
+      },
+      {
+        name: 'Gurbet',
+      },
+      {
+        name: 'Donde Carlos',
+      },
+      {
+        name: 'International Cash & Carry',
       },
     ].sort(sortAlphaByName);
 

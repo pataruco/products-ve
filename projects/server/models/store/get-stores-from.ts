@@ -27,14 +27,9 @@ const getStoresFromSchema = Joi.object({
 
 export const getStoresFrom = async (
   _parent: unknown,
-  {
-    from: { distance, coordinates, product },
-  }: // from: { distance, coordinates, product = ProductName.Pan },
-  GetStoresFromArgs,
+  { from: { distance, coordinates, product } }: GetStoresFromArgs,
 ) => {
   const { lat, lng } = coordinates;
-
-  console.log({ product });
 
   const { error } = getStoresFromSchema.validate({
     distance,
