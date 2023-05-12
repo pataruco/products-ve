@@ -82,6 +82,7 @@ export type Store = {
   createdAt?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  products?: Maybe<Array<Product>>;
   updatedAt?: Maybe<Scalars['String']>;
 };
 
@@ -322,6 +323,11 @@ export type StoreResolvers<
   >;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  products?: Resolver<
+    Maybe<Array<ResolversTypes['Product']>>,
+    ParentType,
+    ContextType
+  >;
   updatedAt?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,

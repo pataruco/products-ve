@@ -123,7 +123,7 @@ describe('Query stores', () => {
     expect(stores.sort(sortAlphaByName)).toEqual(expected);
   });
 
-  it('Get stores by distances and product PAN when product is not given', async () => {
+  it('Get stores by distances product is not given', async () => {
     const query = `query Stores($from: StoresFromInput!) {
                         stores(from: $from) {
                           name
@@ -133,22 +133,94 @@ describe('Query stores', () => {
     const variables = {
       from: {
         coordinates,
-        distance: 5000,
+        distance: 10000,
       },
     };
 
     const expected = [
       {
+        name: 'Brixton Market',
+      },
+      {
+        name: 'Piccolo Bar',
+      },
+      {
+        name: 'El Rincon Quiteno',
+      },
+      {
         name: 'Arepa & Co',
+      },
+      {
+        name: 'Jeans Deli/Cafe',
+      },
+      {
+        name: 'Sun Food',
+      },
+      {
+        name: 'Casa de Carnes',
+      },
+      {
+        name: 'Rye Lane',
+      },
+      {
+        name: 'Afro Caribbean Asian Store',
+      },
+      {
+        name: 'La Chatica',
+      },
+      {
+        name: 'Latin Stop',
+      },
+      {
+        name: 'Tesco Tottenham',
+      },
+      {
+        name: 'Fulham',
+      },
+      {
+        name: 'Tesco Extra Streatham',
+      },
+      {
+        name: 'Tropical Mini Market',
       },
       {
         name: 'Los Arrieros',
       },
       {
+        name: 'M.k. Super Market',
+      },
+      {
+        name: 'K M Butchers',
+      },
+      {
+        name: 'Supermecardo Portugal',
+      },
+      {
         name: 'La Bodeguita',
       },
       {
-        name: 'La Chatica',
+        name: 'Tesco',
+      },
+      {
+        name: 'Tahir Halal Meat',
+      },
+      {
+        name: 'Seven Sisters Greengrocers',
+      },
+      {
+        name: 'Tesco Lewisham Superstore',
+      },
+      {
+        name: 'R Garcia and Sons',
+      },
+      {
+        name: 'Gurbet',
+      },
+      {
+        name: 'Donde Carlos',
+      },
+      {
+        name: 'International Cash & Carry',
       },
     ].sort(sortAlphaByName);
 
@@ -169,5 +241,105 @@ describe('Query stores', () => {
 
     expect(errors).toBeUndefined();
     expect(stores.sort(sortAlphaByName)).toEqual(expected);
+  });
+
+  it('return a stores with a list of products available', async () => {
+    const query = `
+      query Stores($from: StoresFromInput!) {
+        stores(from: $from) {
+          name
+          products {
+            name
+          }
+        }
+      }`;
+
+    const variables = {
+      from: {
+        coordinates,
+        distance: 5000,
+      },
+    };
+
+    const expected = [
+      {
+        name: 'La Bodeguita',
+        products: [
+          {
+            name: 'PAN',
+          },
+          {
+            name: 'COCOSETTE',
+          },
+        ],
+      },
+      {
+        name: 'Los Arrieros',
+        products: [
+          {
+            name: 'PAN',
+          },
+          {
+            name: 'COCOSETTE',
+          },
+        ],
+      },
+      {
+        name: 'La Chatica',
+        products: [
+          {
+            name: 'COCOSETTE',
+          },
+          {
+            name: 'PAN',
+          },
+        ],
+      },
+      {
+        name: 'Arepa & Co',
+        products: [
+          {
+            name: 'PAN',
+          },
+        ],
+      },
+    ]
+      .sort(sortAlphaByName)
+      .map((store) => {
+        const orderedProducts = store.products.sort(sortAlphaByName);
+
+        return {
+          ...store,
+          products: orderedProducts,
+        };
+      });
+
+    const response = await server.executeOperation({
+      query,
+      variables,
+    });
+
+    const {
+      body: {
+        // @ts-ignore
+        singleResult: {
+          errors,
+          data: { stores },
+        },
+      },
+    } = response;
+
+    expect(errors).toBeUndefined();
+    expect(
+      stores
+        .sort(sortAlphaByName)
+        .map((store: { products: { name: string }[] }) => {
+          const orderedProducts = store.products.sort(sortAlphaByName);
+          return {
+            ...store,
+            products: orderedProducts,
+          };
+        }),
+    ).toEqual(expected);
   });
 });

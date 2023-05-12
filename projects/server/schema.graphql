@@ -11,6 +11,7 @@ type Store {
   name: String
   createdAt: String
   updatedAt: String
+  products: [Product!]
 }
 
 enum ProductName {
