@@ -19,5 +19,9 @@ query Store($storeId: String!) {
       lat
       lng
     }
+    products {
+      name
+      id
+    }
   }
 }

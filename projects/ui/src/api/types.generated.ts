@@ -78,6 +78,7 @@ export type Store = {
   createdAt?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
   name?: Maybe<Scalars['String']>;
+  products?: Maybe<Array<Product>>;
   updatedAt?: Maybe<Scalars['String']>;
 };
 
