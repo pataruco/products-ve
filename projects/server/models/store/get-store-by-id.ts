@@ -40,15 +40,28 @@ export const getStoreById = async (
       stores.geog,
       stores.created_at,
       stores.updated_at,
-      ARRAY_AGG(JSON_BUILD_OBJECT('name', products.reference, 'id', products.product_id, 'brand', products.brand, 'createdAt', products.created_at, 'updatedAt', products.updated)) products
+      ARRAY_AGG(
+        JSON_BUILD_OBJECT(
+          'name',
+          products.reference,
+          'id',
+          products.product_id,
+          'brand',
+          products.brand,
+          'createdAt',
+          products.created_at,
+          'updatedAt',
+          products.updated
+        )
+      ) AS products
     FROM
       stores
-      JOIN stores_products ON stores_products.stores_store_id = '${id}'
-      JOIN products ON stores_products.stores_store_id = '${id}'
+      JOIN stores_products ON stores_products.stores_store_id = stores.store_id
+      JOIN products ON stores_products.products_product_id = products.product_id
     WHERE
       stores.store_id = '${id}'
     GROUP BY
-      stores.store_id;`,
+        stores.store_id`,
   );
 
   return fromSqlToStore(rows[0]);

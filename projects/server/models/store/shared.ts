@@ -14,7 +14,7 @@ interface ProductFromStoreRow {
   name: string;
   brand: string;
   createdAt: string;
-  updated: string;
+  updatedAt: string;
 }
 
 export interface StoreRow {
@@ -43,14 +43,20 @@ export const fromSqlToStore = ({
   const [lng, lat] = coordinates;
 
   const productSerialised: Product[] = products.map((product) => {
-    const { id: productId, brand, name, createdAt, updated } = product;
+    const {
+      id: productId,
+      brand,
+      name,
+      createdAt: productCreatedAt,
+      updatedAt: productUpdatedAt,
+    } = product;
 
     return {
       id: productId,
       name: name as ProductName,
       brand,
-      createdAt,
-      updatedAt: updated,
+      createdAt: new Date(productCreatedAt).valueOf().toString(),
+      updatedAt: new Date(productUpdatedAt).valueOf().toString(),
     };
   });
 
