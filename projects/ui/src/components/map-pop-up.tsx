@@ -2,6 +2,8 @@ import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { useStoreQuery } from '../api/operations.generated';
+import { ProductName } from '../api/types.generated';
+import { getProductName } from '../lib/products';
 import markerPopUpAtom from '../recoil/marker-popup';
 
 const StyledMapPopUp = styled.div`
@@ -54,7 +56,7 @@ const MapPopUp = () => {
 
   if (data?.store) {
     const {
-      store: { name, address, coordinates },
+      store: { name, address, coordinates, products },
     } = data;
 
     if (coordinates) {
@@ -73,7 +75,11 @@ const MapPopUp = () => {
               Directions
             </a>
           </p>
-
+          <ul>
+            {products?.map(({ name, id }) => (
+              <li key={id}>{getProductName(name as ProductName)}</li>
+            ))}
+          </ul>
           <button onClick={resetPopUp}>close</button>
         </StyledMapPopUp>
       );

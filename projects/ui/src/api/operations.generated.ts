@@ -55,6 +55,10 @@ export const StoreDocument = gql`
       lat
       lng
     }
+    products {
+      name
+      id
+    }
   }
 }
     `;
@@ -98,4 +102,4 @@ export type StoreQueryVariables = Types.Exact<{
 }>;
 
 
-export type StoreQuery = { __typename?: 'Query', store?: { __typename?: 'Store', name?: string | null, id?: string | null, address?: string | null, coordinates?: { __typename?: 'Coordinates', lat?: number | null, lng?: number | null } | null } | null };
+export type StoreQuery = { __typename?: 'Query', store?: { __typename?: 'Store', name?: string | null, id?: string | null, address?: string | null, coordinates?: { __typename?: 'Coordinates', lat?: number | null, lng?: number | null } | null, products?: Array<{ __typename?: 'Product', name: Types.ProductName, id?: string | null }> | null } | null };
