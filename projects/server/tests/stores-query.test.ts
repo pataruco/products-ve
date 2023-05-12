@@ -303,7 +303,16 @@ describe('Query stores', () => {
           },
         ],
       },
-    ].sort(sortAlphaByName);
+    ]
+      .sort(sortAlphaByName)
+      .map((store) => {
+        const orderedProducts = store.products.sort(sortAlphaByName);
+
+        return {
+          ...store,
+          products: orderedProducts,
+        };
+      });
 
     const response = await server.executeOperation({
       query,
@@ -321,6 +330,16 @@ describe('Query stores', () => {
     } = response;
 
     expect(errors).toBeUndefined();
-    expect(stores.sort(sortAlphaByName)).toEqual(expected);
+    expect(
+      stores
+        .sort(sortAlphaByName)
+        .map((store: { products: { name: string }[] }) => {
+          const orderedProducts = store.products.sort(sortAlphaByName);
+          return {
+            ...store,
+            products: orderedProducts,
+          };
+        }),
+    ).toEqual(expected);
   });
 });

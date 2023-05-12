@@ -51,7 +51,7 @@ export const getStoreById = async (
           'createdAt',
           products.created_at,
           'updatedAt',
-          products.updated
+          products.updated_at
         )
       ) AS products
     FROM
