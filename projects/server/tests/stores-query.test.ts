@@ -123,7 +123,7 @@ describe('Query stores', () => {
     expect(stores.sort(sortAlphaByName)).toEqual(expected);
   });
 
-  it('Get stores by distances and product PAN when product is not given', async () => {
+  it('Get stores by distances product is not given', async () => {
     const query = `query Stores($from: StoresFromInput!) {
                         stores(from: $from) {
                           name
@@ -221,6 +221,87 @@ describe('Query stores', () => {
       },
       {
         name: 'International Cash & Carry',
+      },
+    ].sort(sortAlphaByName);
+
+    const response = await server.executeOperation({
+      query,
+      variables,
+    });
+
+    const {
+      body: {
+        // @ts-ignore
+        singleResult: {
+          errors,
+          data: { stores },
+        },
+      },
+    } = response;
+
+    expect(errors).toBeUndefined();
+    expect(stores.sort(sortAlphaByName)).toEqual(expected);
+  });
+
+  it('return a stores with a list of products available', async () => {
+    const query = `
+      query Stores($from: StoresFromInput!) {
+        stores(from: $from) {
+          name
+          products {
+            name
+          }
+        }
+      }`;
+
+    const variables = {
+      from: {
+        coordinates,
+        distance: 5000,
+      },
+    };
+
+    const expected = [
+      {
+        name: 'La Bodeguita',
+        products: [
+          {
+            name: 'PAN',
+          },
+          {
+            name: 'COCOSETTE',
+          },
+        ],
+      },
+      {
+        name: 'Los Arrieros',
+        products: [
+          {
+            name: 'PAN',
+          },
+          {
+            name: 'COCOSETTE',
+          },
+        ],
+      },
+      {
+        name: 'La Chatica',
+        products: [
+          {
+            name: 'COCOSETTE',
+          },
+          {
+            name: 'PAN',
+          },
+        ],
+      },
+      {
+        name: 'Arepa & Co',
+        products: [
+          {
+            name: 'PAN',
+          },
+        ],
       },
     ].sort(sortAlphaByName);
 
