@@ -11,8 +11,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "command": "pnpm biome check client-e2e"
+    },
+    "format": {
+      "command": "pnpm biome format client-e2e"
     }
   },
   "implicitDependencies": ["client"]
