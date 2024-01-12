@@ -50,8 +50,10 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "command": "pnpm biome check client"
+    },
+    "format": {
+      "command": "pnpm biome format client"
     }
   },
   "tags": []
